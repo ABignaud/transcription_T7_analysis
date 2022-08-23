@@ -1,0 +1,8 @@
+name: split_fastq
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - requests
+  - seqkit=2.2.0

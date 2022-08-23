@@ -1,0 +1,29 @@
+$schema: "http://json-schema.org/draft-04/schema#"
+
+description: an entry in the sample sheet
+
+properties:
+    library:
+        type        : string
+        description : Name of the library.
+    species:
+        type        : string
+        description : Species name of the sample.
+    type:
+        type        : string
+        description : Type of the genomic assay (HiC, RNA-seq, GapR ChIP-seq...)
+    enzyme:
+        type        : string
+        description : Restriction enzyme used in HiC, '-' otherwise.
+    replicates:
+        type        : string
+        description : Replicate id number of the sample.
+    resequencing:
+        type        : string
+        description : Resequencing id number of the sample.
+    read_len:
+        type        : string
+        description : Length of the reads in the library.
+    sequencing:
+        type        : string
+        description : Either 'SE' or 'PE' to defined single or paired end sequencing.

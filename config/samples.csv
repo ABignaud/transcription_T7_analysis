@@ -1,0 +1,58 @@
+library;species;type;enzyme;replicates;resequencing;read_len;sequencing
+# E. coli
+CC328;E_coli;hic;HpaII;1;1;35;PE
+CC330;E_coli;hic;HpaII;2;1;35;PE
+CC334;E_coli;hic;HpaII;3;1;35;PE
+CC336;E_coli;hic;HpaII;4;1;35;PE
+CCEc15;E_coli;rna;-;1;1;35;PE
+#
+# V. cholerae 
+SRR10394900;V_cholerae;hic;HpaII;1;1;35;PE
+SRR18009750;V_cholerae;rna;-;1;1;75;PE
+SRR18009751;V_cholerae;rna;-;1;1;75;PE
+SRR18009754;V_cholerae;rna;-;1;1;75;PE
+#
+# H. volcanii 
+SRR11747734;H_volcanii;hic;HpaII;1;1;35;PE
+SRR11747722;H_volcanii;hic;HpaII;2;1;35;PE
+SRR11747717;H_volcanii;hic;HpaII;3;1;35;PE
+SRR12717849;H_volcanii;hic;HpaII;3;2;150;PE
+SRR11747730;H_volcanii;rna;-;1;1;35;PE
+SRR11747729;H_volcanii;rna;-;2;1;35;PE
+SRR11747728;H_volcanii;rna;-;3;1;35;PE
+SRR18747278;H_volcanii;rna;-;1;1;35;PE
+SRR18747279;H_volcanii;rna;-;2;1;35;PE
+SRR18747299;H_volcanii;rna;-;3;1;35;PE
+#
+# T. kodakarensis
+SRR12717836;T_kodakarensis;hic;HpaII;1;1;75;PE
+SRR12717848;T_kodakarensis;hic;HpaII;2;1;75;PE
+SRR16633624;T_kodakarensis;rna;-;1;1;75;PE
+#
+# H. salinarum
+SRR12717838;H_salinarum;hic;HpaII;1;1;75;PE
+SRR12717837;H_salinarum;hic;HpaII;2;1;75;PE
+SRR18747270;H_salinarum;rna;-;1;1;75;PE
+SRR18747271;H_salinarum;rna;-;1;2;75;PE
+SRR18747268;H_salinarum;rna;-;2;1;75;PE
+SRR18747269;H_salinarum;rna;-;2;2;75;PE
+SRR18747267;H_salinarum;rna;-;3;1;75;PE
+SRR18747266;H_salinarum;rna;-;3;2;75;PE
+SRR18747264;H_salinarum;rna;-;4;1;75;PE
+SRR18747265;H_salinarum;rna;-;4;2;75;PE
+#
+# S. cerevisiae 
+SRR12284725;S_cerevisiae;hic;DpnII,HinfI;1;1;35;PE
+SRR12284732;S_cerevisiae;hic;DpnII;2;1;35;PE
+SRR12284724;S_cerevisiae;hic;DpnII;3;1;35;PE
+SRR11684203;S_cerevisiae;rna;-;1;1;43;PE
+SRR11684204;S_cerevisiae;rna;-;2;1;43;PE
+#
+# A. castellanii 
+SRR15928353;A_castellanii;hic;DpnII;1;1;35;PE
+SRR15928337;A_castellanii;hic;DpnII;2;1;35;PE
+SRR15928339;A_castellanii;hic;DpnII;3;1;35;PE
+SRR15928341;A_castellanii;hic;DpnII;4;1;35;PE
+SRR15928348;A_castellanii;rna;-;1;1;150;SE
+SRR15928349;A_castellanii;rna;-;2;1;150;SE
+SRR15928350;A_castellanii;rna;-;3;1;150;SE
