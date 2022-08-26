@@ -1,166 +1,85 @@
-samples : 'config/samples.csv'
-base_dir : '/data/T7/'
-out_dir : 'data'
-tmp_dir : 'tmp'
-ref_dir : 'fasta/'
-fastq_dir : 'fastq/'
+samples: "config/samples.csv"
+base_dir: "/data/T7/"
+out_dir: "data"
+tmp_dir: "tmp"
+ref_dir: "fasta/"
+fastq_dir: "fastq/"
 
-n_splits : 10
-threads : 32
-threads_split : 4
-balance_args : "--mad-max 10 --min-nnz 5"
-bowtie2_args : "--sensitive-local"
+threads: 32
 
-PAK_P3_T3 :
-    ref : 'PAK_P3.fa'
-    annotation : 'PAK_P3.gff3'
-    circular : True
-    window : 32000
-    threshold : 15
-    unit_length : 0
-    res : [500, 1000, 2000, 4000, 8000]
+# Alignment arguments
+n_splits: 10
+threads_split: 4
+bowtie2_args: "--sensitive-local"
 
-PAK_P3_T13 :
-    ref : 'PAK_P3.fa'
-    annotation : 'PAK_P3.gff3'
-    circular : True
-    window : 32000
-    threshold : 15
-    unit_length : 0
-    res : [500, 1000, 2000, 4000, 8000]
+# Contatc map arguments
+balance_args: "--mad-max 10 --min-nnz 5"
+cmap: Reds
+zoom_width: 32000
 
-E_coli :
-    ref : 'ecoli_k12_mg1655.fa'
-    annotation : 'ecoli_k12_mg1655.gff'
-    circular : True
-    window : 50000
-    threshold : 20
-    unit_length : 3000
-    res : [500, 1000, 2000, 4000, 8000]
+# EPODs
+epods: "wt_m9_rdm_glu_epod_calls.gff"
 
-E_coli_MukB_22C :
-    ref : 'ecoli_k12_mg1655.fa'
-    annotation : 'ecoli_k12_mg1655.gff'
-    circular : True
-    window : 50000
-    threshold : 20
-    unit_length : 3000
-    res : [500, 1000, 2000, 4000, 8000]
+# Species arguments
+E_coli:
+    ref: "ecoli_k12_mg1655.fa"
+    annotation: "ecoli_k12_mg1655.gff"
+    circular: True
+    window: 50000
+    threshold: 20
+    unit_length: 3000
+    res: [500, 1000, 2000, 4000, 5000, 8000]
 
-E_coli_MukB_30C :
-    ref : 'ecoli_k12_mg1655.fa'
-    annotation : 'ecoli_k12_mg1655.gff'
-    circular : True
-    window : 50000
-    threshold : 20
-    unit_length : 3000
-    res : [500, 1000, 2000, 4000, 8000]
+V_cholerae:
+    ref: "v_cholerae.fa"
+    annotation: "v_cholerae.gff3"
+    circular: True
+    window: 50000
+    threshold: 20
+    unit_length: 3000
+    res: [500, 1000, 2000, 4000, 8000]
 
-E_coli_MukB_42C :
-    ref : 'ecoli_k12_mg1655.fa'
-    annotation : 'ecoli_k12_mg1655.gff'
-    circular : True
-    window : 50000
-    threshold : 20
-    unit_length : 3000
-    res : [500, 1000, 2000, 4000, 8000]
+H_volcanii:
+    ref: "h_volcanii.fa"
+    annotation: "h_volcanii.gff"
+    circular: True
+    window: 50000
+    threshold: 20
+    unit_length: 3000
+    res: [500, 1000, 2000, 4000, 8000]
 
-P_aeruginosa :
-    ref : 'pak.fa'
-    annotation : 'pak.gff3'
-    circular : True
-    window : 50000
-    threshold : 20
-    unit_length : 3000
-    res : [500, 1000, 2000, 4000, 8000]
+H_salinarum:
+    ref: "h_salinarum.fa"
+    annotation: "h_salinarum.gff"
+    circular: True
+    window: 50000
+    threshold: 20
+    unit_length: 3000
+    res: [500, 1000, 2000, 4000, 8000]
 
-V_cholerae :
-    ref : 'v_cholerae.fa'
-    annotation : 'v_cholerae.gff3'
-    circular : True
-    window : 50000
-    threshold : 20
-    unit_length : 3000
-    res : [500, 1000, 2000, 4000, 8000]
+T_kodakarensis:
+    ref: "t_kodakarensis.fa"
+    annotation: "t_kodakarensis.gff"
+    circular: True
+    window: 50000
+    threshold: 20
+    unit_length: 3000
+    res: [500, 1000, 2000, 4000, 8000]
 
-H_volcanii :
-    ref : 'h_volcanii.fa'
-    annotation : 'h_volcanii.gff'
-    circular : True
-    window : 50000
-    threshold : 20
-    unit_length : 3000
-    res : [500, 1000, 2000, 4000, 8000]
+S_cerevisiae:
+    ref: "W303.fa"
+    annotation: "W303.gff3"
+    circular: False
+    window: 50000
+    threshold: 20
+    unit_length: 3000
+    res: [500, 1000, 2000, 4000, 8000]
 
-H_salinarum :
-    ref : 'h_salinarum.fa'
-    annotation : 'h_salinarum.gff'
-    circular : True
-    window : 50000
-    threshold : 20
-    unit_length : 3000
-    res : [500, 1000, 2000, 4000, 8000]
-
-S_islandicus :
-    ref : 's_islandicus.fa'
-    annotation : 's_islandicus.gff'
-    circular : True
-    window : 50000
-    threshold : 20
-    unit_length : 3000
-    res : [500, 1000, 2000, 4000, 8000]
-
-T_kodakarensis :
-    ref : 't_kodakarensis.fa'
-    annotation : 't_kodakarensis.gff'
-    circular : True
-    window : 50000
-    threshold : 20
-    unit_length : 3000
-    res : [500, 1000, 2000, 4000, 8000]
-
-S_cerevisiae :
-    ref : 'W303.fa'
-    annotation : 'W303.gff3'
-    circular : False
-    window : 50000
-    threshold : 20
-    unit_length : 3000
-    res : [500, 1000, 2000, 4000, 8000]
-
-A_castellanii :
-    ref : 'a_castellanii.fa'
-    annotation : 'a_castellanii.gff3'
-    circular : False
-    window : 100000
-    threshold : 20
-    unit_length : 3000
-    res : [500, 1000, 2000, 4000, 8000, 20000, 50000]
-
-D_discoideum :
-    ref : 'd_discoideum.fa'
-    annotation : 'd_discoideum.gff3'
-    circular : False
-    window : 100000
-    threshold : 20
-    unit_length : 3000
-    res : [500, 1000, 2000, 4000, 8000, 20000, 50000]
-
-
-M_musculus :
-    ref : 'Mus_musculus.GRCm39.dna.primary_assembly.fa'
-    annotation : 'Mus_musculus.GRCm39.105.chr.gff3'
-    circular : False
-    window : 200000
-    threshold : 20
-    unit_length : 3000
-    res : [5000, 10000, 20000, 50000, 100000]
-
-H_sapiens :
-    ref : 'Homo_sapiens.GRCh38.dna.primary_assembly.fa'
-    annotation : 'Homo_sapiens.GRCh38.105.chr.gff3'
-    circular : False
-    window : 200000
-    threshold : 20
-    unit_length : 3000
-    res : [5000, 10000, 20000, 50000, 100000]
+A_castellanii:
+    ref: "a_castellanii.fa"
+    annotation: "a_castellanii.gff3"
+    circular: False
+    window: 100000
+    threshold: 20
+    unit_length: 3000
+    res: [500, 1000, 2000, 4000, 8000, 20000, 50000]

@@ -66,7 +66,7 @@ with open(snakemake.input.annotation, "r") as file:
         if line.startswith("#"):
             continue
         # Stop if fasta sequence at the end or empty line.
-        elif (line.startswith(">") or (line.startswith('\n'))): 
+        elif line.startswith(">") or (line.startswith("\n")):
             break
         else:
             line = line.split("\t")
@@ -114,7 +114,7 @@ coding_density = n / len(rna_1bp)
 plt.hist(annotation.rpkm, bins=25)
 plt.text(
     x=np.nanpercentile(annotation.rpkm, 80),
-    y=len(annotation.rpkm)//25,
+    y=len(annotation.rpkm) // 25,
     s=f"corr={coding_density:.2f}",
 )
 plt.savefig(snakemake.output.rpkm)
@@ -143,8 +143,8 @@ for tu_length in [0, 3000]:
 
         # Plot
         fig, ax = plt.subplots(
-                2, 1, figsize=(8, 13), gridspec_kw={"height_ratios": [7, 3]}
-            )
+            2, 1, figsize=(8, 13), gridspec_kw={"height_ratios": [7, 3]}
+        )
         # RNA
         ax[1].axvline(
             0, color="black", linestyle="dashed", linewidth=1.5, alpha=0.4
@@ -179,14 +179,22 @@ for tu_length in [0, 3000]:
         ax[0].set_ylabel("Genomic distance (kb)", fontsize=15)
 
         # Add colorbar, title and savefig
-        fig.colorbar(im, ax=ax.ravel().tolist(), shrink=0.33, anchor=(1.3, 0.75))
+        fig.colorbar(
+            im, ax=ax.ravel().tolist(), shrink=0.33, anchor=(1.3, 0.75)
+        )
         plt.subplots_adjust(hspace=0.1)
         ax[0].set_title(label, fontsize=20)
-        plt.savefig(join(
-            snakemake.params.out_dir, f"pileup_pos_{threshold2}_TU{tu_length}.pdf"
-        ), dpi=200)
+        plt.savefig(
+            join(
+                snakemake.params.out_dir,
+                f"pileup_pos_{threshold2}_TU{tu_length}.pdf",
+            ),
+            dpi=200,
+        )
 
-        hic_signal = bch.compute_hic_signal(pileup_pos, binning=500, start=0, stop=5000)
+        hic_signal = bch.compute_hic_signal(
+            pileup_pos, binning=500, start=0, stop=5000
+        )
         print(
             f"{label} (Gene) - Pearson correlation: {sst.pearsonr(hic_signal[10:40], rna_pileup_pos[10:40])[0]:.2f}"
         )
@@ -226,12 +234,10 @@ window_plot = 25000 // ax_kb
 
 # Plot pos
 fig, ax = plt.subplots(
-        2, 1, figsize=(8, 13), gridspec_kw={"height_ratios": [7, 3]}
-    )
-# RNA
-ax[1].axvline(
-    0, color="black", linestyle="dashed", linewidth=1.5, alpha=0.4
+    2, 1, figsize=(8, 13), gridspec_kw={"height_ratios": [7, 3]}
 )
+# RNA
+ax[1].axvline(0, color="black", linestyle="dashed", linewidth=1.5, alpha=0.4)
 ax[1].tick_params(axis="both", labelsize=14)
 ax[1].plot(
     np.arange(
@@ -239,14 +245,18 @@ ax[1].plot(
         window_plot + (1 * binning / ax_kb),
         binning / ax_kb,
     ),
-    rna_pileup_pos[window//500 - 50:window//500 + 51],
+    rna_pileup_pos[window // 500 - 50 : window // 500 + 51],
 )
 ax[1].set_ylabel("Transcription (CPM)", fontsize=15)
 ax[1].set_xlabel("Genomic distance (kb)", fontsize=15)
 # HiC
 ax[0].get_xaxis().set_visible(False)
 im = ax[0].imshow(
-    pileup_pos[window//500 - 50:window//500 + 51, window//500 - 50:window//500 + 51] ** 0.8,
+    pileup_pos[
+        window // 500 - 50 : window // 500 + 51,
+        window // 500 - 50 : window // 500 + 51,
+    ]
+    ** 0.8,
     cmap="Reds",
     vmin=0.003,
     vmax=0.007,
@@ -265,12 +275,10 @@ plt.savefig(snakemake.output.pileup_pos_TU, dpi=200)
 
 # Plot neg
 fig, ax = plt.subplots(
-        2, 1, figsize=(8, 13), gridspec_kw={"height_ratios": [7, 3]}
-    )
-# RNA
-ax[1].axvline(
-    0, color="black", linestyle="dashed", linewidth=1.5, alpha=0.4
+    2, 1, figsize=(8, 13), gridspec_kw={"height_ratios": [7, 3]}
 )
+# RNA
+ax[1].axvline(0, color="black", linestyle="dashed", linewidth=1.5, alpha=0.4)
 ax[1].tick_params(axis="both", labelsize=14)
 ax[1].plot(
     np.arange(
@@ -278,17 +286,28 @@ ax[1].plot(
         window_plot + (1 * binning / ax_kb),
         binning / ax_kb,
     ),
-    rna_pileup_neg[window//500 - 50:window//500 + 51],
+    rna_pileup_neg[window // 500 - 50 : window // 500 + 51],
 )
 ax[1].set_ylabel("Transcription (CPM)", fontsize=15)
 ax[1].set_xlabel("Genomic distance (kb)", fontsize=15)
 # HiC
 ax[0].get_xaxis().set_visible(False)
 im = ax[0].imshow(
-    pileup_neg[window//500 - 50:window//500 + 51, window//500 - 50:window//500 + 51] ** 0.8,
+    pileup_neg[
+        window // 500 - 50 : window // 500 + 51,
+        window // 500 - 50 : window // 500 + 51,
+    ]
+    ** 0.8,
     cmap="Reds",
     vmin=0,
-    vmax=np.nanpercentile(pileup_pos[window//500 - 50:window//500 + 51, window//500 - 50:window//500 + 51] ** 0.8, 99),
+    vmax=np.nanpercentile(
+        pileup_pos[
+            window // 500 - 50 : window // 500 + 51,
+            window // 500 - 50 : window // 500 + 51,
+        ]
+        ** 0.8,
+        99,
+    ),
     extent=[-window_plot, window_plot, window_plot, -window_plot],
 )
 # ax[0].axvline(0, color="black", linestyle="dashed", linewidth=1.5, alpha=0.4)

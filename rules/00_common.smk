@@ -6,11 +6,10 @@
 # Build bowtie2 index of the reference genome.
 rule bt2_index:
   input: lambda w: join(REF_DIR, config[w.species]['ref']),
-  output: touch(join(OUT_DIR, '{species}', 'ref', 'bt2_index.done')),
+  output: touch(join(TMP, 'ref', '{species}_bt2_index.done')),
   params:
-    idx = join(OUT_DIR, '{species}', 'ref', 'genome'),
+    idx = join(TMP, 'ref', '{species}_genome'),
   threads: config['threads']
-  # singularity: "docker://koszullab/hicstuff:v3.1.0"
   conda: "../envs/hic_processing.yaml"
   shell: "bowtie2-build --threads {threads} {input} {params.idx}"
 
@@ -26,7 +25,6 @@ rule split_fastq:
     n_splits = N_SPLITS,
     split_dir = join(TMP, 'split_reads', "{library}_R{end}"),
   message: "Splitting {wildcards.library}_{wildcards.end} into {params.n_splits} split fastq."
-  # singularity: "docker://cmdoret/seqkit:latest"
   conda: "../envs/split_fastq.yaml"
   threads: config['threads_split']
   shell:
@@ -49,7 +47,6 @@ rule split_fastq_se:
     n_splits = N_SPLITS,
     split_dir = join(TMP, 'split_reads', "{rna_se_library}"),
   message: "Splitting {wildcards.rna_se_library} into {params.n_splits} split fastq."
-  # singularity: "docker://cmdoret/seqkit:latest"
   conda: "../envs/split_fastq.yaml"
   threads: config['threads_split']
   shell:

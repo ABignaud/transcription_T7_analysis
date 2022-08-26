@@ -130,3 +130,6 @@ dmypy.json
 
 # Log files
 log
+
+# snakemake
+.snakemake

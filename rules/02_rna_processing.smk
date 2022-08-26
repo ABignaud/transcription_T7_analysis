@@ -6,18 +6,17 @@
 # Map the reads and sort them.
 rule align_rna:
   input:
-    index_flag = join(OUT_DIR, '{species}', 'ref', 'bt2_index.done'),
+    index_flag = lambda w: join(TMP, 'ref', f'{samples.species[w.rna_library]}_bt2_index.done'),
     R1 = join(TMP, 'split_reads', '{rna_library}_R1', '{rna_library}_R1.{split}.fq.gz'),
     R2 = join(TMP, 'split_reads', '{rna_library}_R2', '{rna_library}_R2.{split}.fq.gz'),
   output: 
-    join(TMP, '{species}', 'split_reads', 'rna_bam',  '{rna_library}.{split}.bam'),
+    join(TMP, 'align', '{rna_library}', '{rna_library}.{split}.bam'),
   params:
-    index = lambda w: join(OUT_DIR, samples.species[w.rna_library], 'ref' , 'genome'),
+    index = lambda w: join(TMP, 'ref', f'{samples.species[w.rna_library]}_genome'),
     bt2_presets = config['bowtie2_args'],
   threads: config['threads']
-#   singularity: "docker://koszullab/hicstuff:v3.1.0"
   conda: "../envs/gen_tracks.yaml"
-  log: join(OUT_DIR, '{species}', 'logs', 'mapping', '{rna_library}_{split}.log')
+  log: join(OUT_DIR, 'logs', 'rna', '{rna_library}_{split}.log')
   shell:
     """
     bowtie2 {params.bt2_presets} \
@@ -36,17 +35,16 @@ rule align_rna:
 
 rule align_SE_rna:
   input:
-    index_flag = join(OUT_DIR, '{species}', 'ref', 'bt2_index.done'),
+    index_flag = lambda w: join(TMP, 'ref', f'{samples.species[w.rna_se_library]}_bt2_index.done'),
     fq = join(TMP, 'split_reads', '{rna_se_library}', '{rna_se_library}.{split}.fq.gz'),
   output: 
-    join(TMP, '{species}', 'split_reads', 'rna_bam',  '{rna_se_library}.{split}.bam'),
+    join(TMP, 'align', '{rna_se_library}',  '{rna_se_library}.{split}.bam'),
   params:
-    index = lambda w: join(OUT_DIR, samples.species[w.rna_se_library], 'ref' , 'genome'),
+    index = lambda w: join(TMP, 'ref', f'{samples.species[w.rna_se_library]}_genome'),
     bt2_presets = config['bowtie2_args'],
   threads: config['threads']
-#   singularity: "docker://koszullab/hicstuff:v3.1.0"
   conda: "../envs/gen_tracks.yaml"
-  log: join(OUT_DIR, '{species}', 'logs', 'mapping', '{rna_se_library}_{split}.log')
+  log: join(OUT_DIR, 'logs', 'mapping', '{rna_se_library}_{split}.log')
   shell:
     """
     bowtie2 {params.bt2_presets} \
@@ -63,12 +61,11 @@ rule align_SE_rna:
 rule merge_split_rna_alignments:
   input:
     expand(
-      join(TMP, '{{species}}',  'split_reads', 'rna_bam', '{{rna_library}}.{split}.bam'),
+      join(TMP, 'align', '{{rna_library}}',  '{{rna_library}}.{split}.bam'),
       split=split_names
     )
-  output: join(OUT_DIR, '{species}', 'bam', '{rna_library}.bam')
+  output: join(TMP, 'bam', '{rna_library}.bam')
   threads: config['threads']
-  # singularity: "docker://biocontainers/samtools:v1.7.0_cv4"
   conda: "../envs/gen_tracks.yaml"
   shell:
     """
@@ -76,15 +73,14 @@ rule merge_split_rna_alignments:
         samtools sort -@ {threads} --output-fmt bam -l 9 -o {output}
     """
 
-
 # Build RNA tracks
 rule rna_coverage:
     input:
-        bam = join(OUT_DIR, '{species}', 'bam', '{rna_library}.bam'),
+        bam = join(TMP, 'bam', '{rna_library}.bam'),
     output:
-        unstranded = join(OUT_DIR, '{species}',  'tracks', '{rna_library}_unstranded.bw'),
-        fw = join(OUT_DIR, '{species}', 'tracks', '{rna_library}_forward.bw'),
-        rv = join(OUT_DIR, '{species}', 'tracks', '{rna_library}_reverse.bw'),
+        unstranded = join(OUT_DIR, 'RNA_tracks', '{rna_library}_unstranded.bw'),
+        fw = join(OUT_DIR, 'RNA_tracks', '{rna_library}_forward.bw'),
+        rv = join(OUT_DIR, 'RNA_tracks', '{rna_library}_reverse.bw'),
     threads: config['threads']
     conda: "../envs/gen_tracks.yaml"
     shell:
@@ -120,18 +116,18 @@ rule rna_coverage:
 rule merge_rna_bam:
     input:
         lambda w: [join(
-                OUT_DIR, '{species}', 'bam', f'{i}.bam'
+              TMP, 'bam',  f'{i}.bam'
             ) for i in samples[
-                (samples.species == w.species) & (samples.type == 'rna')
+                (samples.condition == w.condition) & (samples.type == 'rna')
             ].index]
-    output: join(OUT_DIR, '{species}', 'bam', 'rna_merge.bam')
+    output: join(TMP, 'bam', '{condition}.bam'),
     threads: config["threads"]
     conda: "../envs/gen_tracks.yaml"
     params: 
         lambda w: " ".join([join(
-                OUT_DIR, w.species, 'bam', f'{i}.bam'
+                TMP, 'bam',  f'{i}.bam'
             ) for i in samples[
-                (samples.species == w.species) & (samples.type == 'rna')
+                (samples.condition == w.condition) & (samples.type == 'rna')
             ].index])
     shell:'samtools merge -l 9 -O BAM -@ {threads} -f {output} {params}'
         
@@ -139,11 +135,11 @@ rule merge_rna_bam:
 # RNA coverage for species merge.
 rule rna_coverage_merge:
     input:
-        join(OUT_DIR, '{species}', 'bam', 'rna_merge.bam'),
+        join(TMP, 'bam', '{condition}.bam'),
     output:
-        unstranded = join(OUT_DIR,  '{species}', 'tracks', '{species}_rna_unstranded.bw'),
-        fw = join(OUT_DIR,  '{species}', 'tracks', '{species}_rna_forward.bw'),
-        rv = join(OUT_DIR,  '{species}', 'tracks', '{species}_rna_reverse.bw'),
+        unstranded = join(OUT_DIR,  'RNA_tracks', '{condition}_rna_unstranded.bw'),
+        fw = join(OUT_DIR,  'RNA_tracks', '{condition}_rna_forward.bw'),
+        rv = join(OUT_DIR,  'RNA_tracks', '{condition}_rna_reverse.bw'),
     threads: config['threads']
     conda: "../envs/gen_tracks.yaml"
     shell:
