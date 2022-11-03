@@ -32,7 +32,7 @@ rule plot_matrix:
         title = 'E. coli WT - binning {res}kb'
     output:
         join(OUT_DIR, 'figures', 'E_coli_contact_map', 'WT_{res}kb.pdf'),
-    conda: '../envs/contact_map.yaml'
+    conda: '../envs/bacchus.yaml'
     threads: config["threads"]
     script: '../scripts/plot_matrix.py'
 
@@ -55,53 +55,13 @@ rule plot_zoom:
         out_dir = join(OUT_DIR, 'figures', 'E_coli_contact_map'),
     output:
         join(OUT_DIR, 'figures', 'E_coli_contact_map', 'mat_zoom', 'region_{pos1}_{pos2}.pdf'),
-    conda: '../envs/contact_map.yaml'
+    conda: '../envs/bacchus.yaml'
     threads: config["threads"]
     script: '../scripts/plot_matrix.py'
 
-# Do the correlations between hic and rna tracks.
-rule corr:
-    input:
-        hic = join(OUT_DIR, 'HiC', '{species}.mcool'),
-        rna = join(OUT_DIR,  'RNA_tracks', '{species}_rna_unstranded.bw'),
-    output:
-        mat_fig = join(OUT_DIR, 'figures', 'pileup', '{species}', '{species}_map.pdf'),
-        corr_fig = join(OUT_DIR, 'figures', 'pileup', '{species}', '{species}_corr.pdf'),
-    params:
-        binning = lambda w: config[w.species]['res'][0],
-        species = '{species}',
-        circular = lambda w: config[w.species]['circular'],
-    conda: '../envs/bacchus.yaml'
-    script: '../scripts/corr_hic_rna.py'
-
-# Generates pileups plot of HEGs from the output of previous tracks for each 
-# species.
-rule pileup:
-    input:
-        hic = join(OUT_DIR, 'HiC', '{species}.mcool'),
-        rna = join(OUT_DIR,  'RNA_tracks', '{species}_rna_unstranded.bw'),
-        annotation = lambda w: join(REF_DIR, config[w.species]['annotation']),
-    output:
-        pileup_pos_TU = join(OUT_DIR, 'figures', 'pileup', '{species}', '{species}_pileup_pos_TU.pdf'),
-        pileup_neg_TU = join(OUT_DIR, 'figures', 'pileup', '{species}', '{species}_pileup_neg_TU.pdf'),
-        pileup = join(OUT_DIR, 'figures', 'pileup', '{species}', '{species}_pileup.pdf'),
-        pileup_zoom = join(OUT_DIR, 'figures', 'pileup', '{species}', '{species}_pileup_zoom.pdf'),
-        pileup_zoom2 = join(OUT_DIR, 'figures', 'pileup', '{species}', '{species}_pileup_zoom2.pdf'),
-        rpkm = join(OUT_DIR, 'figures', 'pileup', '{species}', '{species}_rpkm.pdf'),
-    params:
-        binning = lambda w: config[w.species]['res'][0],
-        species = '{species}',
-        out_dir = join(OUT_DIR, '{species}', 'figures'),
-        circular = lambda w: config[w.species]['circular'],
-        window = lambda w: config[w.species]['window'],
-        threshold = lambda w: config[w.species]['threshold'],
-        unit_length = lambda w: config[w.species]['unit_length'],
-    conda: '../envs/bacchus.yaml'
-    script: '../scripts/pileup_species.py'
-
 # Run Macrodomain and CIDs detection using directional index and comapre it to 
 # Lioy dataset.
-rule CIDs_analysis:
+rule CIDs_comparison_Lioy:
     input:
         mat = join(OUT_DIR, 'HiC', 'E_coli.mcool'),
     params:
@@ -113,4 +73,10 @@ rule CIDs_analysis:
         compare = join(OUT_DIR, 'figures', 'E_coli_contact_map', 'CIDs', 'comaprison_Lioy.pdf'),
     conda: '../envs/bacchus.yaml'
     script: '../scripts/CIDs_analysis_Lioy.py'
-        
+
+# Run high resolution CIDs analysis based on Directional index and insulation 
+# score.
+rule CIDs_analysis:
+
+# Detect TIDs and compute some metrics on them 
+rule TIDs_analysis:
