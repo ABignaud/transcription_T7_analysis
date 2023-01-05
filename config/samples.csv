@@ -1,4 +1,7 @@
 library;species;condition;type;enzyme;replicates;resequencing;read_len;sequencing
+#
+### Fig 1.
+#
 # E. coli WT
 CC328;E_coli;E_coli;hic;HpaII;1;1;35;PE
 CC330;E_coli;E_coli;hic;HpaII;2;1;35;PE
@@ -9,54 +12,123 @@ CCEc15;E_coli;E_coli;rna;-;1;1;35;PE
 # E. coli Rif
 CC419;E_coli;E_coli_rif;hic;HpaII;4;1;35;PE
 CCEc16;E_coli;E_coli_rif;rna;-;1;1;35;PE
+# 
+### Fig 2.
+#
+# E. coli T7 glu rif-
+CC408;RSG_B834;T7_glu;hic;HapII;1;1;35;PE
+CCEc01;RSG_B834;T7_glu;rna;-;1;1;35;PE
+CCEc01-b;RSG_B834;T7_glu;rna;-;1;1;35;PE
+CCEc02;RSG_B834;T7_glu;rna;-;1;1;35;PE
+CCEc03;RSG_B834;T7_glu;rna;-;1;1;35;PE
+#
+# E. coli T7 glu rif+
+CC409;RSG_B834;T7_glu_rif;hic;HapII;1;1;35;PE
+CCEc13;RSG_B834;T7_glu_rif;rna;-;1;1;35;PE
+#
+# E. coli T7 ara rif-
+CC410;RSG_B834;T7_ara;hic;HapII;1;1;35;PE
+CCEc04;RSG_B834;T7_ara;rna;-;1;1;35;PE
+CCEc04-b;RSG_B834;T7_ara;rna;-;1;2;35;PE
+CCEc05;RSG_B834;T7_ara;rna;-;2;1;35;PE
+CCEc06;RSG_B834;T7_ara;rna;-;3;1;35;PE
+#
+# E. coli T7 ara rif+
+CC411;RSG_B834;T7_ara_rif;hic;HapII;1;1;35;PE
+CCEc14;RSG_B834;T7_ara_rif;rna;-;1;1;35;PE
+#
+### Fig 3.
+#
+# E. coli T7 fw ara rif
+CC307;RSG_B834;T7fw;hic;HpaII;1;1;35;PE
+CCR54;RSG_B834;T7fw;rna;-;1;1;35;PE
+CCchip16;RSG_B834;T7fw;chip;GapR;1;1;35;PE
+CCchip08;RSG_B834;T7fw;chip;T7RNAP;1;1;35;PE
+#
+# E. coli T7 fw 2P 100kb ara rif
+CC308;RSG_B835;T7fw_2P100;hic;HpaII;1;1;35;PE
+CC308-b;RSG_B835;T7fw_2P100;hic;HpaII;1;2;35;PE
+CCR55;RSG_B835;T7fw_2P100;rna;-;1;1;35;PE
+CCchip18;RSG_B835;T7fw_2P100;chip;GapR;1;1;35;PE
+CCchip09;RSG_B835;T7fw_2P100;chip;T7RNAP;1;1;35;PE
+#
+# E. coli T7 fw 2P divergent 100kb ara rif
+CC309;RSG_B836;T7fw_2P100_DV;hic;HpaII;1;1;35;PE
+CC309-b;RSG_B836;T7fw_2P100_DV;hic;HpaII;1;2;35;PE
+CCR56;RSG_B836;T7fw_2P100_DV;rna;-;1;1;35;PE
+CCchip19;RSG_B836;T7fw_2P100_DV;chip;GapR;1;1;35;PE
+CCchip10;RSG_B836;T7fw_2P100_DV;chip;T7RNAP;1;1;35;PE
+#
+# E. coli T7  fw 2P 60kb ara rif
+CC310;RSG_B837;T7fw_2P60;hic;HpaII;1;1;35;PE
+CC310-b;RSG_B837;T7fw_2P60;hic;HpaII;1;2;35;PE
+CCR57;RSG_B837;T7fw_2P60;rna;-;1;1;35;PE
+CCchip20;RSG_B837;T7fw_2P60;chip;GapR;1;1;35;PE
+CCchip11;RSG_B837;T7fw_2P60;chip;T7RNAP;1;1;35;PE
+#
+# E. coli T7 fw 2P divergent 60kb ara rif
+CC311;RSG_B838;T7fw_2P60_DV;hic;HpaII;1;1;35;PE
+CC311-b;RSG_B838;T7fw_2P60_DV;hic;HpaII;1;2;35;PE
+CCR58;RSG_B838;T7fw_2P60_DV;rna;-;1;1;35;PE
+CCchip21;RSG_B838;T7fw_2P60_DV;chip;GapR;1;1;35;PE
+CCchip12;RSG_B838;T7fw_2P60_DV;chip;T7RNAP;1;1;35;PE
+#
+# E. coli T7 rev 2P ara rif
+CC366;RSG_B229;T7fw_2P100_CV;hic;HpaII;1;1;35;PE
+CCR08;RSG_B229;T7fw_2P100_CV;rna;-;1;1;35;PE
+CCchip17;RSG_B229;T7fw_2P100_CV;chip;GapR;1;1;35;PE
+CCchip06;RSG_B229;T7fw_2P100_CV;chip;T7RNAP;1;1;35;PE
+#
+#
+### Pileup Fig 4.
 #
 # V. cholerae 
-SRR10394900;V_cholerae;V_cholerae;hic;HpaII;1;1;35;PE
-SRR18009750;V_cholerae;V_cholerae;rna;-;1;1;75;PE
-SRR18009751;V_cholerae;V_cholerae;rna;-;1;1;75;PE
-SRR18009754;V_cholerae;V_cholerae;rna;-;1;1;75;PE
-#
-# H. volcanii 
-SRR11747734;H_volcanii;H_volcanii;hic;HpaII;1;1;35;PE
-SRR11747722;H_volcanii;H_volcanii;hic;HpaII;2;1;35;PE
-SRR11747717;H_volcanii;H_volcanii;hic;HpaII;3;1;35;PE
-SRR12717849;H_volcanii;H_volcanii;hic;HpaII;3;2;150;PE
-SRR11747730;H_volcanii;H_volcanii;rna;-;1;1;35;PE
-SRR11747729;H_volcanii;H_volcanii;rna;-;2;1;35;PE
-SRR11747728;H_volcanii;H_volcanii;rna;-;3;1;35;PE
-SRR18747278;H_volcanii;H_volcanii;rna;-;1;1;35;PE
-SRR18747279;H_volcanii;H_volcanii;rna;-;2;1;35;PE
-SRR18747299;H_volcanii;H_volcanii;rna;-;3;1;35;PE
-#
-# T. kodakarensis
-SRR12717836;T_kodakarensis;T_kodakarensis;hic;HpaII;1;1;75;PE
-SRR12717848;T_kodakarensis;T_kodakarensis;hic;HpaII;2;1;75;PE
-SRR16633624;T_kodakarensis;T_kodakarensis;rna;-;1;1;75;PE
-#
-# H. salinarum
-SRR12717838;H_salinarum;H_salinarum;hic;HpaII;1;1;75;PE
-SRR12717837;H_salinarum;H_salinarum;hic;HpaII;2;1;75;PE
-SRR18747270;H_salinarum;H_salinarum;rna;-;1;1;75;PE
-SRR18747271;H_salinarum;H_salinarum;rna;-;1;2;75;PE
-SRR18747268;H_salinarum;H_salinarum;rna;-;2;1;75;PE
-SRR18747269;H_salinarum;H_salinarum;rna;-;2;2;75;PE
-SRR18747267;H_salinarum;H_salinarum;rna;-;3;1;75;PE
-SRR18747266;H_salinarum;H_salinarum;rna;-;3;2;75;PE
-SRR18747264;H_salinarum;H_salinarum;rna;-;4;1;75;PE
-SRR18747265;H_salinarum;H_salinarum;rna;-;4;2;75;PE
-#
-# S. cerevisiae 
-SRR12284725;S_cerevisiae;S_cerevisiae;hic;DpnII,HinfI;1;1;35;PE
-SRR12284732;S_cerevisiae;S_cerevisiae;hic;DpnII;2;1;35;PE
-SRR12284724;S_cerevisiae;S_cerevisiae;hic;DpnII;3;1;35;PE
-SRR11684203;S_cerevisiae;S_cerevisiae;rna;-;1;1;43;PE
-SRR11684204;S_cerevisiae;S_cerevisiae;rna;-;2;1;43;PE
-#
-# A. castellanii 
-SRR15928353;A_castellanii;A_castellanii;hic;DpnII;1;1;35;PE
-SRR15928337;A_castellanii;A_castellanii;hic;DpnII;2;1;35;PE
-SRR15928339;A_castellanii;A_castellanii;hic;DpnII;3;1;35;PE
-SRR15928341;A_castellanii;A_castellanii;hic;DpnII;4;1;35;PE
-SRR15928348;A_castellanii;A_castellanii;rna;-;1;1;150;SE
-SRR15928349;A_castellanii;A_castellanii;rna;-;2;1;150;SE
-SRR15928350;A_castellanii;A_castellanii;rna;-;3;1;150;SE
+#SRR10394900;V_cholerae;V_cholerae;hic;HpaII;1;1;35;PE
+#SRR18009750;V_cholerae;V_cholerae;rna;-;1;1;75;PE
+#SRR18009751;V_cholerae;V_cholerae;rna;-;1;1;75;PE
+#SRR18009754;V_cholerae;V_cholerae;rna;-;1;1;75;PE
+##
+## H. volcanii 
+#SRR11747734;H_volcanii;H_volcanii;hic;HpaII;1;1;35;PE
+#SRR11747722;H_volcanii;H_volcanii;hic;HpaII;2;1;35;PE
+#SRR11747717;H_volcanii;H_volcanii;hic;HpaII;3;1;35;PE
+#SRR12717849;H_volcanii;H_volcanii;hic;HpaII;3;2;150;PE
+#SRR11747730;H_volcanii;H_volcanii;rna;-;1;1;35;PE
+#SRR11747729;H_volcanii;H_volcanii;rna;-;2;1;35;PE
+#SRR11747728;H_volcanii;H_volcanii;rna;-;3;1;35;PE
+#SRR18747278;H_volcanii;H_volcanii;rna;-;1;1;35;PE
+#SRR18747279;H_volcanii;H_volcanii;rna;-;2;1;35;PE
+#SRR18747299;H_volcanii;H_volcanii;rna;-;3;1;35;PE
+##
+## T. kodakarensis
+#SRR12717836;T_kodakarensis;T_kodakarensis;hic;HCC328_merged.end1.gzpaII;1;1;75;PE
+#SRR12717848;T_kodakarensis;T_kodakarensis;hic;HpaII;2;1;75;PE
+#SRR16633624;T_kodakarensis;T_kodakarensis;rna;-;1;1;75;PE
+##
+## H. salinarum
+#SRR12717838;H_salinarum;H_salinarum;hic;HpaII;1;1;75;PE
+#SRR12717837;H_salinarum;H_salinarum;hic;HpaII;2;1;75;PE
+#SRR18747270;H_salinarum;H_salinarum;rna;-;1;1;75;PE
+#SRR18747271;H_salinarum;H_salinarum;rna;-;1;2;75;PE
+#SRR18747268;H_salinarum;H_salinarum;rna;-;2;1;75;PE
+#SRR18747269;H_salinarum;H_salinarum;rna;-;2;2;75;PE
+#SRR18747267;H_salinarum;H_salinarum;rna;-;3;1;75;PE
+#SRR18747266;H_salinarum;H_salinarum;rna;-;3;2;75;PE
+#SRR18747264;H_salinarum;H_salinarum;rna;-;4;1;75;PE
+#SRR18747265;H_salinarum;H_salinarum;rna;-;4;2;75;PE
+##
+## S. cerevisiae 
+#SRR12284725;S_cerevisiae;S_cerevisiae;hic;DpnII,HinfI;1;1;35;PE
+#SRR12284732;S_cerevisiae;S_cerevisiae;hic;DpnII;2;1;35;PE
+#SRR12284724;S_cerevisiae;S_cerevisiae;hic;DpnII;3;1;35;PE
+#SRR11684203;S_cerevisiae;S_cerevisiae;rna;-;1;1;43;PE
+#SRR11684204;S_cerevisiae;S_cerevisiae;rna;-;2;1;43;PE
+##
+## A. castellanii 
+#SRR15928353;A_castellanii;A_castellanii;hic;DpnII;1;1;35;PE
+#SRR15928337;A_castellanii;A_castellanii;hic;DpnII;2;1;35;PE
+#SRR15928339;A_castellanii;A_castellanii;hic;DpnII;3;1;35;PE
+#SRR15928341;A_castellanii;A_castellanii;hic;DpnII;4;1;35;PE
+#SRR15928348;A_castellanii;A_castellanii;rna;-;1;1;150;SE
+#SRR15928349;A_castellanii;A_castellanii;rna;-;2;1;150;SE
+#SRR15928350;A_castellanii;A_castellanii;rna;-;3;1;150;SE

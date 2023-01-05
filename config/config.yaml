@@ -1,5 +1,5 @@
 samples: "config/samples.csv"
-base_dir: "/data/T7/"
+base_dir: "/pasteur/appa/homes/ambignau/rsg_fast/T7/"
 out_dir: "data"
 tmp_dir: "tmp"
 ref_dir: "fasta/"
@@ -24,6 +24,69 @@ epods: "wt_m9_rdm_glu_epod_calls.gff"
 E_coli:
     ref: "ecoli_k12_mg1655.fa"
     annotation: "ecoli_k12_mg1655.gff"
+    circular: True
+    window: 50000
+    threshold: 20
+    unit_length: 3000
+    res: [500, 1000, 2000, 4000, 5000, 8000]
+
+RSG_B12:
+    ref: "RSG_B12.fa"
+    annotation: "RSG_B12.gff"
+    circular: True
+    window: 50000
+    threshold: 20
+    unit_length: 3000
+    res: [500, 1000, 2000, 4000, 5000, 8000]
+
+RSG_B834:
+    ref: "RSG_B834.fa"
+    annotation: "RSG_B834.gff"
+    circular: True
+    window: 50000
+    threshold: 20
+    unit_length: 3000
+    res: [500, 1000, 2000, 4000, 5000, 8000]
+
+RSG_B835:
+    ref: "RSG_B835.fa"
+    annotation: "RSG_B835.gff"
+    circular: True
+    window: 50000
+    threshold: 20
+    unit_length: 3000
+    res: [500, 1000, 2000, 4000, 5000, 8000]
+
+RSG_B836:
+    ref: "RSG_B836.fa"
+    annotation: "RSG_B836.gff"
+    circular: True
+    window: 50000
+    threshold: 20
+    unit_length: 3000
+    res: [500, 1000, 2000, 4000, 5000, 8000]
+
+RSG_B837:
+    ref: "RSG_B837.fa"
+    annotation: "RSG_B837.gff"
+    circular: True
+    window: 50000
+    threshold: 20
+    unit_length: 3000
+    res: [500, 1000, 2000, 4000, 5000, 8000]
+
+RSG_B838:
+    ref: "RSG_B838.fa"
+    annotation: "RSG_B838.gff"
+    circular: True
+    window: 50000
+    threshold: 20
+    unit_length: 3000
+    res: [500, 1000, 2000, 4000, 5000, 8000]
+
+RSG_B229:
+    ref: "RSG_B229.fa"
+    annotation: "RSG_B229.gff"
     circular: True
     window: 50000
     threshold: 20

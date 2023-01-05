@@ -34,42 +34,46 @@ TMP = join(config['base_dir'], config['tmp_dir'])
 REF_DIR = join(config['base_dir'], config['ref_dir'])
 FASTQ_DIR = join(config['base_dir'], config['fastq_dir'])
 
+CONTROL_CHIP = 'CCchip14'
+
 wildcard_constraints:
-  hic_library = "|".join(samples.library[samples.type == 'hic']),
-  rna_library = "|".join(samples.library[samples.type == 'rna']),
-  rna_se_library = "|".join(samples.library[(samples.type == 'rna') & (samples.sequencing == 'SE')]),
-  species = "|".join(species),
-  condition = "|".join(conditions),
+    hic_library = "|".join(samples.library[samples.type == 'hic']),
+    rna_library = "|".join(samples.library[samples.type == 'rna']),
+    chip_library = f'{"|".join(samples.library[samples.type == "chip"])}|{CONTROL_CHIP}',
+    rna_se_library = "|".join(samples.library[(samples.type == 'rna') & (samples.sequencing == 'SE')]),
+    species = "|".join(species),
+    condition = "|".join(conditions),
 
 # Pipeline sub-workflows
 include: 'rules/00_common.smk'
 include: 'rules/01_hic_processing.smk'
 include: 'rules/02_rna_processing.smk'
-# include: 'rules/03_gapr_processing.smk'
-include: 'rules/04_ecoli_matrix_analysis.smk'
+include: 'rules/03_chip_processing.smk'
+include: 'rules/04_WT_ecoli_analysis.smk'
 # include: 'rules/04_pileup_analysis.smk'
 
 rule all:
     input:
-        # 01
+        # 01 - HiC
         expand(join(OUT_DIR, 'HiC', '{condition}.mcool'), condition=conditions),
-        # 02
-        expand(join(OUT_DIR, 'RNA_tracks', '{rna_library}_unstranded.bw'), rna_library=samples[samples.type == "rna"].index),
-        expand(join(OUT_DIR, 'RNA_tracks', '{condition}_rna_unstranded.bw'), condition=conditions),
-        # 03
-        # 04
-        expand(join(OUT_DIR, 'figures', 'E_coli_contact_map', 'WT_{res}kb.pdf'), res=[1, 2, 4]),
+        # 02 - RNA
         expand(
-          join(OUT_DIR, 'figures', 'E_coli_contact_map', 'mat_zoom', 'region_{pos1}_{pos2}.pdf'),
-          zip,
-          **{'pos1': [420, 1110, 1960, 3436, 3870], 'pos2': [484, 1174, 2024, 3500, 3934]},
+            join(OUT_DIR, 'RNA_tracks', '{condition}_rna_unstranded.bw'),
+            condition=conditions
         ),
-        expand(join(OUT_DIR, 'figures', 'pileup', '{species}', '{species}_map.pdf'), species=species),
-        expand(join(OUT_DIR, 'figures', 'pileup', '{species}', '{species}_corr.pdf'), species=species),
-        expand(join(OUT_DIR, 'figures', 'pileup', '{species}', '{species}_pileup.pdf'), species=species),
-        expand(join(OUT_DIR, 'figures', 'pileup', '{species}', '{species}_pileup_pos_TU.pdf'), species=species),
-        expand(join(OUT_DIR, 'figures', 'pileup', '{species}', '{species}_pileup_neg_TU.pdf'), species=species),
-        join(OUT_DIR, 'figures', 'E_coli_contact_map', 'CIDs', 'comaprison_Lioy.pdf'),
+        # 03 - ChIP
+        expand(join(
+                OUT_DIR, 'ChIP_tracks', '{chip_library}.bw'
+            ),
+            chip_library = samples.library[samples.type == 'chip'],
+        ),
+        # 04 - Fig1
+        # join(TMP, 'all_fig1.done'),
+        # 05 - Fig2
+        # 06 - Fig3
+        # 07 - Fig4 - pileup
+        # join(TMP, 'pileup.done'),
+        # 08 - Others
 
         
         

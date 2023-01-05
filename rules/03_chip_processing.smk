@@ -1,38 +1,21 @@
 #!/bin/env snakemake -s
 
-# Rule to generates the RNA tracks
+# Rule to generates the ChIP tracks. Based on timymapper pipeline. 
+# https://github.com/js2264/tinyMapper.git
 
-# Build bowtie2 index of the reference genome.
-# rule bt2_index:
-#   input: lambda w: config['ref'][w.species]
-#   output: touch(join(OUT_DIR, '{species}', 'ref', 'bt2_index.done'))
-#   params:
-#     idx = join(OUT_DIR, '{species}', 'ref', 'genome')
-#   # singularity: "docker://koszullab/hicstuff:v3.1.0"
-#   # conda: "../envs/hic_processing.yaml"
-#   shell: "bowtie2-build {input} {params.idx}"
-
-
-# # Make splits from Hi-C fastq files to speed up mapping. [between 1 and 999]
-# N_SPLITS = 4
-# split_names = [f'part_{s:03}' for s in range(1, N_SPLITS + 1)] #base names of split files
-
-
-# Map the reads and sort them.
-rule align_rna:
+rule align_chip:
   input:
-    index_flag = lambda w: join(OUT_DIR, samples.species[w.rna_library], 'ref', 'bt2_index.done'),
-    R1 = lambda w: join(samples.folder[w.rna_library], '{rna_library}_R1.fq.gz'),
-    R2 = lambda w: join(samples.folder[w.rna_library], '{rna_library}_R2.fq.gz'),
+    index_flag = lambda w: join(TMP, 'ref', f'{samples.species[w.chip_library]}_bt2_index.done'),
+    R1 = join(TMP, 'split_reads', '{chip_library}_R1', '{chip_library}_R1.{split}.fq.gz'),
+    R2 = join(TMP, 'split_reads', '{chip_library}_R2', '{chip_library}_R2.{split}.fq.gz'),
   output: 
-    join(OUT_DIR, 'bam', '{rna_library}.bam'),
+    join(TMP, 'align', '{chip_library}', '{chip_library}.{split}.bam'),
   params:
-    index = lambda w: join(OUT_DIR, samples.species[w.rna_library], 'ref' , 'genome'),
+    index = lambda w: join(TMP, 'ref', f'{samples.species[w.chip_library]}_genome'),
     bt2_presets = config['bowtie2_args'],
   threads: config['threads']
-#   singularity: "docker://koszullab/hicstuff:v3.1.0"
-#   conda: "../envs/hic_processing.yaml"
-  log: "logs/mapping/{rna_library}.log"
+  conda: "../envs/gen_tracks.yaml"
+  log: join(OUT_DIR, 'logs', 'rna', '{chip_library}_{split}.log')
   shell:
     """
     bowtie2 {params.bt2_presets} \
@@ -41,102 +24,44 @@ rule align_rna:
             --maxins 1000 \
             -1 {input.R1} \
             -2 {input.R2} 2> {log} | \
-      samtools sort -@ {threads} -O BAM - | \
-      samtools fixmate -@ {threads} --output-fmt bam -m - - | \
-      samtools markdup -@ {threads} --output-fmt bam -r - - | \
-      samtools view -@ 16 --output-fmt bam -f 2 -q 10 -1 -b - | \
-      samtools sort -@ 16 --output-fmt bam -l 9 -o {output} 
+        samtools sort -@ {threads} -n -O BAM - | \
+        samtools fixmate -@ {threads} --output-fmt bam -m - - | \
+        samtools sort -@ {threads} -O BAM - | \
+        samtools markdup -@ {threads} --output-fmt bam -r - - | \
+        samtools view -@ {threads} --output-fmt bam -f 2 -q 10 -1 -b - | \
+        samtools sort -@ {threads} --output-fmt bam -l 9 -o {output}
     """
 
+rule merge_split_chip_alignments:
+  input:
+    expand(
+      join(TMP, 'align', '{{chip_library}}',  '{{chip_library}}.{split}.bam'),
+      split=split_names
+    )
+  output: join(TMP, 'bam', '{chip_library}.bam')
+  threads: config['threads']
+  conda: "../envs/gen_tracks.yaml"
+  shell:
+    """
+    samtools merge -n -O BAM -@ {threads} - {input} | 
+        samtools sort -@ {threads} --output-fmt bam -l 9 -o {output}
+    """
 
-# Build RNA tracks
-rule rna_coverage:
+rule chip_coverage:
     input:
-        bam = join(OUT_DIR, 'bam', '{rna_library}.bam'),
+        bam = join(TMP, 'bam', '{chip_library}.bam'),
     output:
-        unstranded = join(OUT_DIR, 'tracks', '{rna_library}_unstranded.bw'),
-        forward = join(OUT_DIR, 'tracks', '{rna_library}_forward.bw'),
-        reverse = join(OUT_DIR, 'tracks', '{rna_library}_reverse.bw'),
+        unstranded = join(OUT_DIR, 'ChIP_tracks', '{chip_library}.bw'),
     threads: config['threads']
+    conda: "../envs/gen_tracks.yaml"
     shell:
         """
-        bamCoverage --bam {input} \
+        samtools index {input.bam} -@ {threads}
+        bamCoverage --bam {input.bam} \
             --outFileName {output.unstranded} \
             --binSize 1 \
             --numberOfProcessors {threads} \
             --normalizeUsing CPM \
-            --extendReads \
-            --ignoreDuplicates
-        bamCoverage --bam {input} \
-            --outFileName {output.forward} \
-            --binSize 1 \
-            --numberOfProcessors {threads} \
-            --normalizeUsing CPM \
-            --extendReads \
-            --ignoreDuplicates\
-            --filterRNAstrand forward
-        bamCoverage --bam {input} \
-            --outFileName {output.reverse} \
-            --binSize 1 \
-            --numberOfProcessors {threads} \
-            --normalizeUsing CPM \
-            --extendReads \
-            --ignoreDuplicates\
-            --filterRNAstrand reverse
+            --extendReads 
         """
-
-
-# Merge multiple bam files into one.
-rule merge_rna_bam:
-    input:
-        lambda w: [join(
-                OUT_DIR, 'bam', f'{i}.bam'
-            ) for i in samples[
-                (samples.species == w.species) & (samples.type == 'rna')
-            ].index]
-    output: join(OUT_DIR, '{species}', 'bam', 'rna_merge.bam')
-    threads: config["threads"]
-    params: 
-        lambda w: " ".join([join(
-                OUT_DIR, 'bam', f'{i}.bam'
-            ) for i in samples[
-                (samples.species == w.species) & (samples.type == 'rna')
-            ].index])
-    shell:'samtools merge -l 9 -O BAM -@ {threads} -f {output} {params}'
         
-
-# RNA coverage for species merge.
-rule rna_coverage:
-    input:
-        join(OUT_DIR, '{species}', 'bam', 'rna_merge.bam'),
-    output:
-        unstranded = join(OUT_DIR,  '{species}', 'tracks', '{species}_rna_unstranded.bw'),
-        forward = join(OUT_DIR,  '{species}', 'tracks', '{species}_rna_forward.bw'),
-        reverse = join(OUT_DIR,  '{species}', 'tracks', '{species}_rna_reverse.bw'),
-    threads: config['threads']
-    shell:
-        """
-        bamCoverage --bam {input} \
-            --outFileName {output.unstranded} \
-            --binSize 1 \
-            --numberOfProcessors {threads} \
-            --normalizeUsing CPM \
-            --extendReads \
-            --ignoreDuplicates
-        bamCoverage --bam {input} \
-            --outFileName {output.forward} \
-            --binSize 1 \
-            --numberOfProcessors {threads} \
-            --normalizeUsing CPM \
-            --extendReads \
-            --ignoreDuplicates\
-            --filterRNAstrand forward
-        bamCoverage --bam {input} \
-            --outFileName {output.reverse} \
-            --binSize 1 \
-            --numberOfProcessors {threads} \
-            --normalizeUsing CPM \
-            --extendReads \
-            --ignoreDuplicates\
-            --filterRNAstrand reverse
-        """

@@ -33,30 +33,30 @@ rule align_rna:
         samtools sort -@ {threads} --output-fmt bam -l 9 -o {output}
     """
 
-rule align_SE_rna:
-  input:
-    index_flag = lambda w: join(TMP, 'ref', f'{samples.species[w.rna_se_library]}_bt2_index.done'),
-    fq = join(TMP, 'split_reads', '{rna_se_library}', '{rna_se_library}.{split}.fq.gz'),
-  output: 
-    join(TMP, 'align', '{rna_se_library}',  '{rna_se_library}.{split}.bam'),
-  params:
-    index = lambda w: join(TMP, 'ref', f'{samples.species[w.rna_se_library]}_genome'),
-    bt2_presets = config['bowtie2_args'],
-  threads: config['threads']
-  conda: "../envs/gen_tracks.yaml"
-  log: join(OUT_DIR, 'logs', 'mapping', '{rna_se_library}_{split}.log')
-  shell:
-    """
-    bowtie2 {params.bt2_presets} \
-            -p {threads} \
-            -x {params.index} \
-            --maxins 1000 \
-            -U {input.fq} 2> {log} | \
-        samtools sort -@ {threads} -O BAM - | \
-        samtools markdup -@ {threads} --output-fmt bam -r - - | \
-        samtools view -@ {threads} --output-fmt bam -q 10 -1 -b - | \
-        samtools sort -@ {threads} --output-fmt bam -l 9 -o {output}
-    """
+# rule align_SE_rna:
+#   input:
+#     index_flag = lambda w: join(TMP, 'ref', f'{samples.species[w.rna_se_library]}_bt2_index.done'),
+#     fq = join(TMP, 'split_reads', '{rna_se_library}', '{rna_se_library}.{split}.fq.gz'),
+#   output: 
+#     join(TMP, 'align', '{rna_se_library}',  '{rna_se_library}.{split}.bam'),
+#   params:
+#     index = lambda w: join(TMP, 'ref', f'{samples.species[w.rna_se_library]}_genome'),
+#     bt2_presets = config['bowtie2_args'],
+#   threads: config['threads']
+#   conda: "../envs/gen_tracks.yaml"
+#   log: join(OUT_DIR, 'logs', 'mapping', '{rna_se_library}_{split}.log')
+#   shell:
+#     """
+#     bowtie2 {params.bt2_presets} \
+#             -p {threads} \
+#             -x {params.index} \
+#             --maxins 1000 \
+#             -U {input.fq} 2> {log} | \
+#         samtools sort -@ {threads} -O BAM - | \
+#         samtools markdup -@ {threads} --output-fmt bam -r - - | \
+#         samtools view -@ {threads} --output-fmt bam -q 10 -1 -b - | \
+#         samtools sort -@ {threads} --output-fmt bam -l 9 -o {output}
+#     """
 
 rule merge_split_rna_alignments:
   input:
@@ -91,15 +91,13 @@ rule rna_coverage:
             --binSize 1 \
             --numberOfProcessors {threads} \
             --normalizeUsing CPM \
-            --extendReads 200 \
-            --ignoreDuplicates
+            --extendReads 200
         bamCoverage --bam {input.bam} \
             --outFileName {output.fw} \
             --binSize 1 \
             --numberOfProcessors {threads} \
             --normalizeUsing CPM \
             --extendReads 200 \
-            --ignoreDuplicates\
             --filterRNAstrand forward
         bamCoverage --bam {input.bam} \
             --outFileName {output.rv} \
@@ -107,7 +105,6 @@ rule rna_coverage:
             --numberOfProcessors {threads} \
             --normalizeUsing CPM \
             --extendReads 200 \
-            --ignoreDuplicates\
             --filterRNAstrand reverse
         """
 
@@ -150,15 +147,13 @@ rule rna_coverage_merge:
             --binSize 1 \
             --numberOfProcessors {threads} \
             --normalizeUsing CPM \
-            --extendReads 200 \
-            --ignoreDuplicates
+            --extendReads 200
         bamCoverage --bam {input} \
             --outFileName {output.fw} \
             --binSize 1 \
             --numberOfProcessors {threads} \
             --normalizeUsing CPM \
             --extendReads 200 \
-            --ignoreDuplicates\
             --filterRNAstrand forward
         bamCoverage --bam {input} \
             --outFileName {output.rv} \
@@ -166,6 +161,5 @@ rule rna_coverage_merge:
             --numberOfProcessors {threads} \
             --normalizeUsing CPM \
             --extendReads 200 \
-            --ignoreDuplicates \
             --filterRNAstrand reverse
         """
