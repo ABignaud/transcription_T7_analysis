@@ -65,7 +65,7 @@ rule merge_split_rna_alignments:
       split=split_names
     )
   output: join(TMP, 'bam', '{rna_library}.bam')
-  threads: config['threads']
+  threads: config['threads_small']
   conda: "../envs/gen_tracks.yaml"
   shell:
     """
@@ -81,7 +81,7 @@ rule rna_coverage:
         unstranded = join(OUT_DIR, 'RNA_tracks', '{rna_library}_unstranded.bw'),
         fw = join(OUT_DIR, 'RNA_tracks', '{rna_library}_forward.bw'),
         rv = join(OUT_DIR, 'RNA_tracks', '{rna_library}_reverse.bw'),
-    threads: config['threads']
+    threads: config['threads_small']
     conda: "../envs/gen_tracks.yaml"
     shell:
         """
@@ -118,7 +118,7 @@ rule merge_rna_bam:
                 (samples.condition == w.condition) & (samples.type == 'rna')
             ].index]
     output: join(TMP, 'bam', '{condition}.bam'),
-    threads: config["threads"]
+    threads: config["threads_small"]
     conda: "../envs/gen_tracks.yaml"
     params: 
         lambda w: " ".join([join(
@@ -137,7 +137,7 @@ rule rna_coverage_merge:
         unstranded = join(OUT_DIR,  'RNA_tracks', '{condition}_rna_unstranded.bw'),
         fw = join(OUT_DIR,  'RNA_tracks', '{condition}_rna_forward.bw'),
         rv = join(OUT_DIR,  'RNA_tracks', '{condition}_rna_reverse.bw'),
-    threads: config['threads']
+    threads: config['threads_small']
     conda: "../envs/gen_tracks.yaml"
     shell:
         """

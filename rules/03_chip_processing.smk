@@ -13,7 +13,7 @@ rule align_chip:
   params:
     index = lambda w: join(TMP, 'ref', f'{samples.species[w.chip_library]}_genome'),
     bt2_presets = config['bowtie2_args'],
-  threads: config['threads']
+  threads: config['threads_small']
   conda: "../envs/gen_tracks.yaml"
   log: join(OUT_DIR, 'logs', 'rna', '{chip_library}_{split}.log')
   shell:
@@ -39,7 +39,7 @@ rule merge_split_chip_alignments:
       split=split_names
     )
   output: join(TMP, 'bam', '{chip_library}.bam')
-  threads: config['threads']
+  threads: config['threads_small']
   conda: "../envs/gen_tracks.yaml"
   shell:
     """
@@ -52,7 +52,7 @@ rule chip_coverage:
         bam = join(TMP, 'bam', '{chip_library}.bam'),
     output:
         unstranded = join(OUT_DIR, 'ChIP_tracks', '{chip_library}.bw'),
-    threads: config['threads']
+    threads: config['threads_small']
     conda: "../envs/gen_tracks.yaml"
     shell:
         """

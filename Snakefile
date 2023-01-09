@@ -27,7 +27,7 @@ samples = pd.read_csv(
 validate(samples, schema="schemas/samples.schema.yaml")
 
 species = np.unique(samples.species)
-conditions = np.unique(samples.condition)
+conditions = np.unique(samples.condition[samples.type == 'hic'])
 
 OUT_DIR = join(config['base_dir'], config['out_dir'])
 TMP = join(config['base_dir'], config['tmp_dir'])
@@ -39,7 +39,7 @@ CONTROL_CHIP = 'CCchip14'
 wildcard_constraints:
     hic_library = "|".join(samples.library[samples.type == 'hic']),
     rna_library = "|".join(samples.library[samples.type == 'rna']),
-    chip_library = f'{"|".join(samples.library[samples.type == "chip"])}|{CONTROL_CHIP}',
+    chip_library = "|".join(samples.library[samples.type == "chip"]),
     rna_se_library = "|".join(samples.library[(samples.type == 'rna') & (samples.sequencing == 'SE')]),
     species = "|".join(species),
     condition = "|".join(conditions),
@@ -68,7 +68,7 @@ rule all:
             chip_library = samples.library[samples.type == 'chip'],
         ),
         # 04 - Fig1
-        # join(TMP, 'all_fig1.done'),
+        join(TMP, 'all_fig1.done'),
         # 05 - Fig2
         # 06 - Fig3
         # 07 - Fig4 - pileup
