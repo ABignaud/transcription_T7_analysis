@@ -58,6 +58,16 @@ merge_split_hic_alignments:
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
+hic_coverage:
+    queue: fast 
+    partition: common,dedicated
+    ncpus: 8
+    mem: 16G
+    ntasks: 1
+    name: PIL.{rule}.{wildcards}
+    output: logs/cluster/{rule}.{wildcards}.out
+    error: logs/cluster/{rule}.{wildcards}.err
+
 generate_pairs:
     queue: normal 
     partition: common

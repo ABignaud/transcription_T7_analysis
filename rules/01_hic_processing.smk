@@ -41,6 +41,27 @@ rule merge_split_hic_alignments:
   shell: "samtools merge -n -O BAM -@ {threads} {output} {input}"
 
 
+rule hic_coverage:
+    input:
+        bam = join(TMP, 'bam', '{hic_library}_R1.bam'),
+    params:
+        sorted_bam = join(TMP, 'bam', '{hic_library}_R1_sorted.bam'),
+    output:
+        unstranded = join(OUT_DIR, 'HiC_tracks', '{hic_library}.bw'),
+    threads: config['threads_small']
+    conda: "../envs/gen_tracks.yaml"
+    shell:
+        """
+        samtools sort {input.bam} -@ {threads} -o {params.sorted_bam}
+        samtools index {params.sorted_bam} -@ {threads}
+        bamCoverage --bam {params.sorted_bam} \
+            --outFileName {output.unstranded} \
+            --binSize 1 \
+            --numberOfProcessors {threads} \
+            --normalizeUsing CPM 
+        """
+
+
 ## 00 Generate Hi-C pairs files
 rule generate_pairs:
   input:
@@ -64,7 +85,6 @@ rule generate_pairs:
                       -g {params.idx} \
                       -o {params.hicdir} \
                       -S bam \
-                      --filter \
                       -P {wildcards.hic_library} \
                       -npD \
                       -M cool \

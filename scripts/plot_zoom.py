@@ -17,21 +17,29 @@ import seaborn as sns
 
 # Import snakemake parameters.
 annotation_file = snakemake.input.annotation
-mat_wt_file = snakemake.input.cool_wt
-mat_rf_file = snakemake.input.cool_rf
+mat_wt_file = str(snakemake.input.cool_wt)
+mat_rf_file = str(snakemake.input.cool_rf)
 rna_wt_file = snakemake.input.rna_wt
 rna_rf_file = snakemake.input.rna_rf
+cov_wt_file = snakemake.input.cov_wt
+cov_rf_file = snakemake.input.cov_rf
 gc_file = snakemake.input.gc
-epod_file = snakemake.input.epod
-res = snakemake.params.res
+epod_file = snakemake.input.EPODs
+res = int(snakemake.params.res)
 cmap = snakemake.params.cmap
-outdir = snakemake.params.out_dir
+outdir = str(snakemake.params.outdir)
 width = snakemake.params.width
 pos = snakemake.params.positions
 
+# Create outdir if necessary.
+os.makedirs(outdir, exist_ok=True)
+
 
 def import_annotation_gff(annotation_file):
-    """Function to create a dictionnary of the gene positions from the gff file."""
+    """Function to create a table of the gene positions from the gff file."""
+    annotation = pd.DataFrame(
+        columns=["type", "start", "end", "strand", "name"]
+    )
     with open(annotation_file, "r") as file:
         for line in file:
             # Header.
@@ -59,19 +67,29 @@ def import_annotation_gff(annotation_file):
 
 # Import files.
 annotation = import_annotation_gff(annotation_file)
-mat_wt = cooler.Cooler(f"{mat_wt_file}::/resolutions/{res}")
-mat_rf = cooler.Cooler(f"{mat_rf_file}::/resolutions/{res}")
+mat_wt = cooler.Cooler(f"{mat_wt_file}::/resolutions/{res}").matrix(
+    balance=True, sparse=False
+)[:]
+mat_wt[np.isnan(mat_wt)] = 0
+mat_rf = cooler.Cooler(f"{mat_rf_file}::/resolutions/{res}").matrix(
+    balance=True, sparse=False
+)[:]
+mat_rf[np.isnan(mat_rf)] = 0
 rna_wt, _ = bcio.extract_big_wig(rna_wt_file, binning=100)
 rna_rf, _ = bcio.extract_big_wig(rna_rf_file, binning=100)
-gc_content = pd.read_csv(gc_file, sep="\t").GC
+cov_wt, _ = bcio.extract_big_wig(cov_wt_file, binning=1000)
+cov_rf, _ = bcio.extract_big_wig(cov_wt_file, binning=1000)
+gc_content = pd.read_csv(gc_file, sep="\t", header=None).iloc[:, 1]
 epod = pd.read_csv(epod_file, sep="\t", header=None)
 
 # Make the rotation of the matrix to plot them
 mat_wt_rot = copy.copy(mat_wt)
 mat_wt_rot = bch.interpolate_white_lines(mat_wt_rot)
+mat_wt_rot[np.isnan(mat_wt_rot)] = 0
 mat_wt_rot = ndimage.rotate(mat_wt_rot, 45, reshape=True)
 mat_rf_rot = copy.copy(mat_rf)
 mat_rf_rot = bch.interpolate_white_lines(mat_rf_rot)
+mat_rf_rot[np.isnan(mat_rf_rot)] = 0
 mat_rf_rot = ndimage.rotate(mat_rf_rot, 45, reshape=True)
 
 
@@ -82,6 +100,8 @@ def plot_region(
     M2_rot,
     rna1,
     rna2,
+    cov1,
+    cov2,
     annotation,
     binning,
     width,
@@ -112,15 +132,17 @@ def plot_region(
             )
         )
     )
+    max_cov = np.nanmax(cov1) * 1.02
+    min_cov = np.nanmin(cov1) * 0.98
 
     # Define panels depending on split or not.
     if split and ymax > 1500:
-        a = 3
+        a = 4
         fig, ax = plt.subplots(
-            5,
+            7,
             2,
-            figsize=(16, 10),
-            gridspec_kw={"height_ratios": [1, 30, 6, 12, 3]},
+            figsize=(16, 12),
+            gridspec_kw={"height_ratios": [1, 30, 1, 6, 12, 3, 3]},
             sharex=False,
         )
 
@@ -128,35 +150,35 @@ def plot_region(
         d = 0.02
         D = 0.04
         for j in range(2):
-            ax[2, j].set_xlim(zoom_ini[0] // 1000, zoom_ini[1] // 1000)
-            ax[2, j].tick_params(axis="both", labelsize=15)
-            ax[2, j].spines["bottom"].set_visible(False)
-            ax[2, j].spines["top"].set_visible(False)
-            ax[2, j].spines["right"].set_visible(False)
-            ax[2, j].set_ylim(ymax - 525, ymax)
-            ax[2, j].get_xaxis().set_visible(False)
+            ax[a - 1, j].set_xlim(zoom_ini[0] // 1000, zoom_ini[1] // 1000)
+            ax[a - 1, j].tick_params(axis="both", labelsize=15)
+            ax[a - 1, j].spines["bottom"].set_visible(False)
+            ax[a - 1, j].spines["top"].set_visible(False)
+            ax[a - 1, j].spines["right"].set_visible(False)
+            ax[a - 1, j].set_ylim(ymax - 525, ymax)
+            ax[a - 1, j].get_xaxis().set_visible(False)
 
             # Add the small cut between the two panels
             kwargs = dict(
-                transform=ax[2, j].transAxes, color="k", clip_on=False
+                transform=ax[a - 1, j].transAxes, color="k", clip_on=False
             )
-            ax[2, j].plot((-d, +d), (-D, +D), **kwargs)  # top-left diagonal
+            ax[a - 1, j].plot((-d, +d), (-D, +D), **kwargs)  # top-left diagonal
             kwargs.update(
-                transform=ax[3, j].transAxes
+                transform=ax[a, j].transAxes
             )  # switch to the bottom axes
-            ax[3, j].plot(
+            ax[a, j].plot(
                 (-d, +d), (1 - d, 1 + d), **kwargs
             )  # bottom-left diagonal
 
         # Plot the RNA on the split panel
-        ax[2, 0].fill_between(
+        ax[a - 1, 0].fill_between(
             np.arange(
                 zoom_ini[0] // 1000, zoom_ini[1] // 1000, rna_binning / 1000
             ),
             rna1[zoom_ini[0] // rna_binning : zoom_ini[1] // rna_binning],
             color="black",
         )
-        ax[2, 1].fill_between(
+        ax[a - 1, 1].fill_between(
             np.arange(
                 zoom_ini[0] // 1000, zoom_ini[1] // 1000, rna_binning / 1000
             ),
@@ -165,12 +187,12 @@ def plot_region(
         )
 
     else:
-        a = 2
+        a = 3
         fig, ax = plt.subplots(
-            4,
+            6,
             2,
-            figsize=(16, 10),
-            gridspec_kw={"height_ratios": [1, 30, 15, 3]},
+            figsize=(16, 12),
+            gridspec_kw={"height_ratios": [1, 30, 1, 15, 3, 3]},
             sharex=False,
         )
 
@@ -179,6 +201,9 @@ def plot_region(
         ax[0, j].set_xlim(zoom_ini[0], zoom_ini[1])
         ax[0, j].get_xaxis().set_visible(False)
         ax[0, j].get_yaxis().set_visible(False)
+        ax[2, j].set_xlim(zoom_ini[0], zoom_ini[1])
+        ax[2, j].get_xaxis().set_visible(False)
+        ax[2, j].get_yaxis().set_visible(False)
     pos = 1
     for i in range(len(annotation_zoom)):
         # Extract annotation information
@@ -227,23 +252,24 @@ def plot_region(
         ):
             start = max(start, zoom_ini[0]) // rna_binning
             end = min(end, zoom_ini[1]) // rna_binning
-            ax[0, j].add_patch(
-                patches.Rectangle(
-                    (start * 100, 0),
-                    (end - start) * 100,
-                    1,
-                    edgecolor=color,
-                    facecolor=color,
-                    fill=True,
+            for j in range(2):
+                ax[2, j].add_patch(
+                    patches.Rectangle(
+                        (start * 100, 0),
+                        (end - start) * 100,
+                        1,
+                        edgecolor=color,
+                        facecolor=color,
+                        fill=True,
+                    )
                 )
-            )
-            ax[0, j].text(
-                x=(start + ((end - start) / 2)) * 100,
-                y=pos + 0.5,
-                s="EPOD",
-                rotation=90 * pos,
-                wrap=True,
-            )
+    #                 ax[2, j].text(
+    #                     x=(start + ((end - start) / 2)) * 100,
+    #                     y=pos + 0.5,
+    #                     s="EPOD",
+    #                     rotation=90 * pos,
+    #                     wrap=True,
+    #                 )
 
     # Plot the matrices
     ax[1, 0].set_ylabel("Genomic distance (kb)", fontsize=15)
@@ -257,7 +283,7 @@ def plot_region(
         cmap=cmap,
         interpolation="none",
         vmin=0,
-        vmax=0.0025,
+        vmax=np.nanpercentile(M1[zoom[0] : zoom[1], zoom[0] : zoom[1]], 97),
         extent=(col1 / np.sqrt(2), col2 / np.sqrt(2), width, -width),
     )
 
@@ -267,7 +293,7 @@ def plot_region(
         cmap=cmap,
         interpolation="none",
         vmin=0,
-        vmax=np.percentile(M1[zoom[0] : zoom[1], zoom[0] : zoom[1]], 98),
+        vmax=np.nanpercentile(M1[zoom[0] : zoom[1], zoom[0] : zoom[1]], 97),
         extent=(col1 / np.sqrt(2), col2 / np.sqrt(2), width, -width),
     )
 
@@ -315,9 +341,36 @@ def plot_region(
             color="black",
         )
         ax[a + 1, j].set_xlim(zoom_ini[0] // 1000, zoom_ini[1] // 1000)
-        ax[a + 1, j].set_xlabel("Genomic coordinates (kb)", size=15)
         ax[a + 1, j].tick_params(axis="both", labelsize=15)
-    ax[a + 1, 0].set_ylabel("GC\ncontent", fontsize=15)
+        ax[a + 1, j].get_xaxis().set_visible(False)
+    ax[a + 1, 0].set_ylabel("GC", fontsize=15)
+
+    # Coverage
+    cov_binning = 1000
+    ax[a + 2, 0].plot(
+        np.arange(zoom_ini[0] // 1000, zoom_ini[1] // 1000, cov_binning / 1000),
+        cov1[
+            (zoom_ini[0] + 250)
+            // cov_binning : (zoom_ini[1] + 250)
+            // cov_binning
+        ],
+        color="black",
+    )
+    ax[a + 2, 1].plot(
+        np.arange(zoom_ini[0] // 1000, zoom_ini[1] // 1000, cov_binning / 1000),
+        cov2[
+            (zoom_ini[0] + 250)
+            // cov_binning : (zoom_ini[1] + 250)
+            // cov_binning
+        ],
+        color="black",
+    )
+    for j in range(2):
+        ax[a + 2, j].set_xlim(zoom_ini[0] // 1000, zoom_ini[1] // 1000)
+        ax[a + 2, j].set_ylim(min_cov, max_cov)
+        ax[a + 2, j].set_xlabel("Genomic coordinates (kb)", size=15)
+        ax[a + 2, j].tick_params(axis="both", labelsize=15)
+    ax[a + 2, 0].set_ylabel("HiC\ncoverage\n(CPM)", fontsize=15)
 
     # Colorbar
     cbar = fig.colorbar(
@@ -330,27 +383,21 @@ def plot_region(
         plt.subplots_adjust(wspace=0.2, hspace=0.1)
     else:
         plt.subplots_adjust(wspace=0.2, hspace=0.1)
-    plt.savefig(outfile, bbox_inches="tight", dpi=100)
+    plt.savefig(outfile, bbox_inches="tight", dpi=200)
 
-
-# Make sure output directory exists.
-os.makedirs(outdir, exist_ok=True)
-os.makedirs(join(outdir, "mat_zoom"), exist_ok=True)
 
 for split in [True, False]:
     if split:
         outfile = join(
             outdir,
-            "mat_zoom",
             f"region_{pos[0]}_{pos[1]}_split.pdf",
         )
     else:
         outfile = join(
             outdir,
-            "mat_zoom",
             f"region_{pos[0]}_{pos[1]}.pdf",
         )
-    position = [p * 1000 for p in pos]
+    position = [int(p) * 1000 for p in pos]
     plot_region(
         mat_wt,
         mat_wt_rot,
@@ -358,6 +405,8 @@ for split in [True, False]:
         mat_rf_rot,
         rna_wt,
         rna_rf,
+        cov_wt,
+        cov_rf,
         annotation,
         res,
         width,

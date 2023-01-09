@@ -5,6 +5,10 @@
 
 import cooler
 import bacchus.plot as bcp
+import os
+
+# Create outdir if necessary.
+os.makedirs(str(snakemake.params.outdir), exist_ok=True)
 
 # Import the matrix.
 mat = cooler.Cooler(
