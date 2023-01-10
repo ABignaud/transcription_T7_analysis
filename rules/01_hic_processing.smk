@@ -69,6 +69,7 @@ rule generate_pairs:
       bam2 = join(TMP, 'bam', "{hic_library}_R2.bam"),
   output:
       cool = join(TMP, 'hicstuff', '{hic_library}', '{hic_library}.cool'),
+      frags = join(TMP, 'hicstuff', '{hic_library}', '{hic_library}.frags.tsv'),
   params:
       enz = lambda w: samples.enzyme[w.hic_library],
       hicdir = directory(join(TMP, 'hicstuff', '{hic_library}')),

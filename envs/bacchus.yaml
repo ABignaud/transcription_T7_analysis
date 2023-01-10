@@ -8,6 +8,7 @@ dependencies:
   - pip
   - python=3.8.3
   - pyBigWig=0.3.18
+  - matplotlib-venn=0.11.7
   - pip:
       - Cython
       - numpy==1.23

@@ -116,6 +116,7 @@ rule TIDs_analysis:
         cov = join(OUT_DIR, 'HiC_tracks', 'CC328.bw'),
         gc = join(OUT_DIR, 'E_coli', 'ref', 'gc_content.tsv'),
         frags = join(TMP, 'hicstuff', 'CC328', 'CC328.frags.tsv'),
+        EPODs = join(REF_DIR, config['epods']),
     params: outdir = join(OUT_DIR, 'figures', 'WT_contact_map', 'TIDs'),
     output:
         bed = join(OUT_DIR, 'figures', 'WT_contact_map', 'TIDs', 'TIDs.bed'),
@@ -126,6 +127,7 @@ rule TIDs_analysis:
         rna = join(OUT_DIR, 'figures', 'WT_contact_map', 'TIDs', 'TIDs_RNA.pdf'),
         dist_bar = join(OUT_DIR, 'figures', 'WT_contact_map', 'TIDs', 'TIDs_bar_dist.pdf'),
         dist_line = join(OUT_DIR, 'figures', 'WT_contact_map', 'TIDs', 'TIDs_line_dist.pdf'),
+        venn_plot = join(OUT_DIR, 'figures', 'WT_contact_map', 'TIDs', 'TIDs_Venn.pdf'),
     conda: '../envs/bacchus.yaml'
     threads: 1
     script: '../scripts/TIDs_analysis.py'
