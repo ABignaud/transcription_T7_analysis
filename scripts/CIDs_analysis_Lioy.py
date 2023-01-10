@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import bacchus.directionnal as bcd
+import bacchus.directional as bcd
 import cooler
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 import scipy.sparse as sp
 
 mat_file = snakemake.input.mat
@@ -13,6 +14,9 @@ cmap = snakemake.params.cmap
 macro_output = str(snakemake.output.macrodomain)
 CID_output = str(snakemake.output.cid)
 out_file = str(snakemake.output.compare)
+
+# Create outdir if necessary.
+os.makedirs(str(snakemake.params.outdir), exist_ok=True)
 
 mat = cooler.Cooler(f"{mat_file}::/resolutions/{res}").matrix(
     balance=True, sparse=True
@@ -109,7 +113,7 @@ plt.fill_between(
     x=np.arange(0, len(di_CIDs) * 5, 5),
     y1=0,
     y2=di_CIDs,
-    where=v <= 0,
+    where=di_CIDs <= 0,
     color="r",
 )
 plt.ylim(-2, 2)
@@ -122,7 +126,8 @@ print("Numbers of CIDs:", len(borders_CIDs))
 from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
 
-# Plot the CID on a matrix at 5kb with their rspectives positions marked with stars.
+# Plot the CID on a matrix at 5kb with their rspectives positions marked with
+# stars.
 axis = "kb"
 start = 0
 title = "WT E. coli domains - binning 5kb"
