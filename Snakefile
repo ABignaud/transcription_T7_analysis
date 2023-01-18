@@ -53,6 +53,7 @@ include: 'rules/02_rna_processing.smk'
 include: 'rules/03_chip_processing.smk'
 include: 'rules/04_WT_ecoli_analysis.smk'
 include: 'rules/05_T7_system_analysis.smk'
+include: 'rules/06_multiple_promoters_analysis.smk'
 
 rule all:
     input:
@@ -74,6 +75,7 @@ rule all:
         # 05 - Fig2
         join(TMP, 'all_fig2.done'),
         # 06 - Fig3
+        join(OUT_DIR, 'figures', 'T7_system', 'multi_prom', 'multi_prom_corr.txt'),
         # 07 - Fig4 - pileup
         # join(TMP, 'pileup.done'),
         # 08 - Others
