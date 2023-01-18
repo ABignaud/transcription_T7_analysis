@@ -7,10 +7,10 @@ fastq_dir: "fastq/"
 
 threads: 32
 threads_small: 8
+threads_serp: 25
 
 # Alignment arguments
 n_splits: 10
-threads_split: 4
 bowtie2_args: "--sensitive-local"
 
 # Contatc map arguments

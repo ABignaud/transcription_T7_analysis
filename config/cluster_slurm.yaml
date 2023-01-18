@@ -4,7 +4,7 @@ __default__:
     mem: 16G
     ntasks: 1
     partition : common,dedicated
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
@@ -14,7 +14,17 @@ split_fastq:
     ncpus: 8
     mem: 16G
     ntasks: 1
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
+    output: logs/cluster/{rule}.{wildcards}.out
+    error: logs/cluster/{rule}.{wildcards}.err
+
+split_fastq_se:
+    queue: normal
+    partition: common
+    ncpus: 8
+    mem: 16G
+    ntasks: 1
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
@@ -22,9 +32,19 @@ align_rna:
     queue: normal
     partition: common
     ncpus: 32
-    mem: 128G
+    mem: 32G
     ntasks: 1
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
+    output: logs/cluster/{rule}.{wildcards}.out
+    error: logs/cluster/{rule}.{wildcards}.err
+
+align_SE_rna:
+    queue: normal
+    partition: common
+    ncpus: 32
+    mem: 32G
+    ntasks: 1
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
@@ -34,7 +54,7 @@ bt2_index:
     ncpus: 32
     mem: 32G
     ntasks: 1
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
@@ -44,7 +64,7 @@ split_align_hic:
     ncpus: 8
     mem: 16G
     ntasks: 1
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
@@ -54,17 +74,17 @@ merge_split_hic_alignments:
     ncpus: 32
     mem: 32G
     ntasks: 1
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
 hic_coverage:
-    queue: fast 
-    partition: common,dedicated
+    queue: normal
+    partition: common
     ncpus: 8
     mem: 16G
     ntasks: 1
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
@@ -74,7 +94,7 @@ generate_pairs:
     ncpus: 1
     mem: 32G
     ntasks: 1
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
@@ -84,7 +104,7 @@ merge_rebin_cool:
     ncpus: 1
     mem: 32G
     ntasks: 1
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
@@ -94,7 +114,7 @@ zoomify_normalize_cool:
     ncpus: 8
     mem: 32G
     ntasks: 1
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
@@ -104,7 +124,7 @@ merge_split_rna_alignments:
     ncpus: 8
     mem: 16G
     ntasks: 1
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
@@ -114,7 +134,7 @@ rna_coverage:
     ncpus: 8
     mem: 16G
     ntasks: 1
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
@@ -124,7 +144,7 @@ merge_rna_bam:
     ncpus: 8
     mem: 16G
     ntasks: 1
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
@@ -134,7 +154,7 @@ rna_coverage_merge:
     ncpus: 8
     mem: 16G
     ntasks: 1
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
@@ -144,7 +164,7 @@ align_chip:
     ncpus: 8
     mem: 16G
     ntasks: 1
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
@@ -154,7 +174,7 @@ merge_split_chip_alignments:
     ncpus: 8
     mem: 16G
     ntasks: 1
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
@@ -164,7 +184,7 @@ chip_coverage:
     ncpus: 8
     mem: 16G
     ntasks: 1
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
@@ -174,10 +194,29 @@ generate_gc:
     ncpus: 8
     mem: 16G
     ntasks: 1
-    name: PIL.{rule}.{wildcards}
+    name: T7.{rule}.{wildcards}
     output: logs/cluster/{rule}.{wildcards}.out
     error: logs/cluster/{rule}.{wildcards}.err
 
+rifampicine_fw:
+    queue: fast
+    partition: common,dedicated
+    ncpus: 25
+    mem: 64G
+    ntasks: 1
+    name: T7.{rule}.{wildcards}
+    output: logs/cluster/{rule}.{wildcards}.out
+    error: logs/cluster/{rule}.{wildcards}.err
+
+rifampicine_rv:
+    queue: fast
+    partition: common,dedicated
+    ncpus: 25
+    mem: 64G
+    ntasks: 1
+    name: T7.{rule}.{wildcards}
+    output: logs/cluster/{rule}.{wildcards}.out
+    error: logs/cluster/{rule}.{wildcards}.err
 
 # Command to run everything
 
@@ -189,4 +228,4 @@ generate_gc:
 # mkdir -p logs/cluster/
 
 # Run everything on cluster.
-# snakemake --cluster "sbatch --mem {cluster.mem} -p {cluster.partition} --qos {cluster.queue} -c {cluster.ncpus} -n {cluster.ntasks} -J {cluster.name} -o {cluster.output} -e {cluster.error}" --cluster-config config/cluster_slurm.yaml -j 32 --use-conda
+# snakemake --cluster "sbatch --mem {cluster.mem} -p {cluster.partition} --qos {cluster.queue} -c {cluster.ncpus} -n {cluster.ntasks} -J {cluster.name} -o {cluster.output} -e {cluster.error}" --cluster-config config/cluster_slurm.yaml -j 64 --use-conda

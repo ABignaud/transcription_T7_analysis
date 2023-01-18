@@ -41,6 +41,8 @@ wildcard_constraints:
     rna_library = "|".join(samples.library[samples.type == 'rna']),
     chip_library = "|".join(samples.library[samples.type == "chip"]),
     rna_se_library = "|".join(samples.library[(samples.type == 'rna') & (samples.sequencing == 'SE')]),
+    rna_pe_library = "|".join(samples.library[(samples.type == 'rna') & (samples.sequencing == 'PE')]),
+    pe_library = "|".join(samples.library[samples.sequencing == 'PE']),
     species = "|".join(species),
     condition = "|".join(conditions),
 
@@ -50,7 +52,7 @@ include: 'rules/01_hic_processing.smk'
 include: 'rules/02_rna_processing.smk'
 include: 'rules/03_chip_processing.smk'
 include: 'rules/04_WT_ecoli_analysis.smk'
-# include: 'rules/04_pileup_analysis.smk'
+include: 'rules/05_T7_system_analysis.smk'
 
 rule all:
     input:
@@ -70,6 +72,7 @@ rule all:
         # 04 - Fig1
         join(TMP, 'all_fig1.done'),
         # 05 - Fig2
+        join(TMP, 'all_fig2.done'),
         # 06 - Fig3
         # 07 - Fig4 - pileup
         # join(TMP, 'pileup.done'),

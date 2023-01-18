@@ -19,14 +19,14 @@ N_SPLITS = config['n_splits']
 split_names = [f'part_{s:03}' for s in range(1, N_SPLITS + 1)] #base names of split files.
 
 rule split_fastq:
-    input: join(FASTQ_DIR, '{library}_R{end}.fq.gz'),
-    output: expand(join(TMP, 'split_reads', '{{library}}_R{{end}}', '{{library}}_R{{end}}.{split}.fq.gz'), split=split_names),
+    input: join(FASTQ_DIR, '{pe_library}_R{end}.fq.gz'),
+    output: expand(join(TMP, 'split_reads', '{{pe_library}}_R{{end}}', '{{pe_library}}_R{{end}}.{split}.fq.gz'), split=split_names),
     params:
         n_splits = N_SPLITS,
-        split_dir = join(TMP, 'split_reads', "{library}_R{end}"),
-    message: "Splitting {wildcards.library}_{wildcards.end} into {params.n_splits} split fastq."
+        split_dir = join(TMP, 'split_reads', "{pe_library}_R{end}"),
+    message: "Splitting {wildcards.pe_library}_{wildcards.end} into {params.n_splits} split fastq."
     conda: "../envs/split_fastq.yaml"
-    threads: config['threads_split']
+    threads: config['threads_small']
     shell:
       """
       mkdir -p {params.split_dir}
@@ -41,23 +41,23 @@ rule split_fastq:
 
 
 # Make split om single ends libraries.
-# rule split_fastq_se:
-#     input: join(FASTQ_DIR, '{rna_se_library}.fq.gz'),
-#     output: expand(join(TMP, 'split_reads', '{{rna_se_library}}', '{{rna_se_library}}.{split}.fq.gz'), split=split_names),
-#     params:
-#         n_splits = N_SPLITS,
-#         split_dir = join(TMP, 'split_reads', "{rna_se_library}"),
-#     message: "Splitting {wildcards.rna_se_library} into {params.n_splits} split fastq."
-#     conda: "../envs/split_fastq.yaml"
-#     threads: config['threads_split']
-#     shell:
-#       """
-#       mkdir -p {params.split_dir}
-#       # 100 split fastqs will be created with name pattern 001.fq - 100.fq
-#       seqkit split2 -p {params.n_splits} \
-#           -w 0 \
-#           -f \
-#           -j {threads} \
-#           -1 {input} \
-#           -O {params.split_dir}
-#       """
+rule split_fastq_se:
+    input: join(FASTQ_DIR, '{rna_se_library}.fq.gz'),
+    output: expand(join(TMP, 'split_reads', '{{rna_se_library}}', '{{rna_se_library}}.{split}.fq.gz'), split=split_names),
+    params:
+        n_splits = N_SPLITS,
+        split_dir = join(TMP, 'split_reads', "{rna_se_library}"),
+    message: "Splitting {wildcards.rna_se_library} into {params.n_splits} split fastq."
+    conda: "../envs/split_fastq.yaml"
+    threads: config['threads_small']
+    shell:
+      """
+      mkdir -p {params.split_dir}
+      # 100 split fastqs will be created with name pattern 001.fq - 100.fq
+      seqkit split2 -p {params.n_splits} \
+          -w 0 \
+          -f \
+          -j {threads} \
+          -1 {input} \
+          -O {params.split_dir}
+      """
