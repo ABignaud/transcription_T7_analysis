@@ -28,6 +28,7 @@ validate(samples, schema="schemas/samples.schema.yaml")
 
 species = np.unique(samples.species)
 conditions = np.unique(samples.condition[samples.type == 'hic'])
+conditions_rna = np.unique(samples.condition[samples.type == 'rna'])
 
 OUT_DIR = join(config['base_dir'], config['out_dir'])
 TMP = join(config['base_dir'], config['tmp_dir'])
@@ -45,6 +46,7 @@ wildcard_constraints:
     pe_library = "|".join(samples.library[samples.sequencing == 'PE']),
     species = "|".join(species),
     condition = "|".join(conditions),
+    condition_rna = "|".join(conditions_rna),
 
 # Pipeline sub-workflows
 include: 'rules/00_common.smk'
@@ -55,6 +57,8 @@ include: 'rules/04_WT_ecoli_analysis.smk'
 include: 'rules/05_T7_system_analysis.smk'
 include: 'rules/06_multiple_promoters_analysis.smk'
 
+include: 'rules/08_drugs_mutants.smk'
+
 rule all:
     input:
         # 01 - HiC
@@ -62,7 +66,7 @@ rule all:
         # 02 - RNA
         expand(
             join(OUT_DIR, 'RNA_tracks', '{condition}_rna_unstranded.bw'),
-            condition=conditions
+            condition=conditions_rna
         ),
         # 03 - ChIP
         expand(join(
@@ -79,6 +83,8 @@ rule all:
         # 07 - Fig4 - pileup
         # join(TMP, 'pileup.done'),
         # 08 - Others
+        join(TMP, 'topA_fig.done'),
+
 
         
         

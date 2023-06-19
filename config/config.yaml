@@ -103,6 +103,15 @@ V_cholerae:
     unit_length: 3000
     res: [500, 1000, 2000, 4000, 8000]
 
+C_crescentus:
+    ref: "c_crescentus_cb15.fa"
+    annotation: "c_crescentus_cb15.gff"
+    circular: True
+    window: 50000
+    threshold: 20
+    unit_length: 3000
+    res: [500, 1000, 2000, 4000, 8000]
+
 H_volcanii:
     ref: "h_volcanii.fa"
     annotation: "h_volcanii.gff"

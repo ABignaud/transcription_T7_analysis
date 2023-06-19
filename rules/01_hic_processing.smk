@@ -98,15 +98,14 @@ rule merge_rebin_cool:
       lambda w: [join(TMP, 'hicstuff', f'{i}', f'{i}.cool') for i in samples[(samples.condition == w.condition) & (samples.type == 'hic')].index]
   params:
       input = lambda w: " ".join([join(TMP, 'hicstuff', f'{i}', f'{i}.cool') for i in samples[(samples.condition == w.condition) & (samples.type == 'hic')].index]),
-      tmp = join(TMP, 'cool', '{condition}.cool'),
       prefix = join(TMP, 'cool', '{condition}_500bp'),
   output: join(TMP, 'cool', '{condition}_500bp.cool')
   threads: 1
   conda: "../envs/hic_processing.yaml"
   shell: 
       """
-      cooler merge {params.tmp} {params.input}
-      hicstuff rebin -b 500bp {params.tmp} {params.prefix} 
+      hicstuff rebin -b 500bp {params.input} {params.prefix} 
+      cooler merge {params.output} {params.prefix}.cool
       """
 
 

@@ -140,8 +140,8 @@ rule all_fig1:
           zip,
           **{'pos1': [420, 1110, 1960, 3436, 3870], 'pos2': [484, 1174, 2024, 3500, 3934]},
         ),
-        join(OUT_DIR, 'figures', 'WT_contact_map', 'CIDs', 'comparison_Lioy.pdf'),
-        join(OUT_DIR, 'figures', 'WT_contact_map', 'CIDs', 'full_mat_CIDs.pdf'),
+        # join(OUT_DIR, 'figures', 'WT_contact_map', 'CIDs', 'comparison_Lioy.pdf'),
+        # join(OUT_DIR, 'figures', 'WT_contact_map', 'CIDs', 'full_mat_CIDs.pdf'),
         join(OUT_DIR, 'figures', 'WT_contact_map', 'TIDs', 'TIDs_statistics.txt'),
     output: touch(join(TMP, 'all_fig1.done'))
     threads: 1

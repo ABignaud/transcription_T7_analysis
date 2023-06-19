@@ -28,6 +28,7 @@ CCEc13;RSG_B834;T7_glu_rif;rna;-;1;1;35;PE
 #
 # E. coli T7 ara rif-
 CC410;RSG_B834;T7_ara;hic;HapII;1;1;35;PE
+AT690;RSG_B834;T7_ara2;hic;HapII,HinfI;1;1;35;PE
 CCEc04;RSG_B834;T7_ara;rna;-;1;1;35;PE
 CCEc04-b;RSG_B834;T7_ara;rna;-;1;2;35;PE
 CCEc05;RSG_B834;T7_ara;rna;-;2;1;35;PE
@@ -103,7 +104,19 @@ CCchip06;RSG_B834;T7_2P100_CV;chip;T7RNAP;1;1;35;PE
 # Control for GapR chip
 CCchip14;RSG_B834;T7_fw_glu_rif;chip;GapR;1;1;35;PE
 #
+# topA
+AT656;RSG_B834;T7_pBAD_ara30;hic;DpnII,HinfI;1;1;35;PE
+AT657;RSG_B834;T7_pBAD_ara30_topA;hic;DpnII,HinfI;1;1;35;PE
+AT658;RSG_B834;T7_pBAD_ara60;hic;DpnII,HinfI;1;1;35;PE
+AT659;RSG_B834;T7_pBAD_ara60_topA;hic;DpnII,HinfI;1;1;35;PE
+# AT690;RSG_B834;T7_JG;hic;HpaII,HinfI;1;1;35;PE
+AT691;RSG_B834;T7_topA;hic;HpaII,HinfI;1;1;35;PE
+AT707;RSG_B834;T7_rif_JG;hic;HpaII,HinfI;1;1;35;PE
+AT708;RSG_B834;T7_topA_rif;hic;HpaII,HinfI;1;1;35;PE
 #
+# Promoters
+AT692;RSG_B834;pompA;hic;HpaII,HinfI;1;1;35;PE
+AT693;RSG_B834;prpsM;hic;HpaII,HinfI;1;1;35;PE
 ### Pileup Fig 4.
 #
 # V. cholerae 
@@ -111,6 +124,11 @@ CCchip14;RSG_B834;T7_fw_glu_rif;chip;GapR;1;1;35;PE
 #SRR18009750;V_cholerae;V_cholerae;rna;-;1;1;75;PE
 #SRR18009751;V_cholerae;V_cholerae;rna;-;1;1;75;PE
 #SRR18009754;V_cholerae;V_cholerae;rna;-;1;1;75;PE
+##
+## C. crescentus CB15
+SRR824843;C_crescentus;C_crescentus;hic;BglII;1;1;40;PE
+SRR824844;C_crescentus;C_crescentus;hic;BglII;2;1;40;PE
+# SRR824846;C_crescentus;C_crescentus;hic;NcoI;3;1;40;PE
 ##
 ## H. volcanii 
 #SRR11747734;H_volcanii;H_volcanii;hic;HpaII;1;1;35;PE
@@ -156,3 +174,4 @@ CCchip14;RSG_B834;T7_fw_glu_rif;chip;GapR;1;1;35;PE
 #SRR15928348;A_castellanii;A_castellanii;rna;-;1;1;150;SE
 #SRR15928349;A_castellanii;A_castellanii;rna;-;2;1;150;SE
 #SRR15928350;A_castellanii;A_castellanii;rna;-;3;1;150;SE
+
