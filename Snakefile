@@ -83,7 +83,7 @@ rule all:
         # 07 - Fig4 - pileup
         # join(TMP, 'pileup.done'),
         # 08 - Others
-        join(TMP, 'topA_fig.done'),
+        join(TMP, 'drugs_fig.done'),
 
 
         

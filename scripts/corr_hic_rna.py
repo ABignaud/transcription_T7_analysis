@@ -65,18 +65,18 @@ chrom_start_size[prev_name] = {
 }
 
 # Compute HiC signal.
-hic = bch.compute_hic_signal(M, binning=binning, start=0, stop=5000)
-print(st.spearmanr(hic, rna)[0])
+hic = bch.compute_hic_signal(M, binning=binning, start=5000, stop=10000)
+print(st.spearmanr(hic, rna[:-2])[0])
 
 # Plot correlation between HiC signal and RNAseq.
 fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-ax.scatter(hic, np.log(rna))
+ax.scatter(hic, np.log(rna[:-2]))
 ax.set_xlabel("HiC signal")
 ax.set_ylabel("Transcription (log)")
 ax.set_title(label)
 ax.text(
     x=np.nanpercentile(hic, 99),
     y=np.nanpercentile(np.log(rna), 1),
-    s=f"corr={st.spearmanr(hic, rna)[0]:.2f}",
+    s=f"corr={st.spearmanr(hic, rna[:-2])[0]:.2f}",
 )
 plt.savefig(snakemake.output.corr_fig, dpi=100)

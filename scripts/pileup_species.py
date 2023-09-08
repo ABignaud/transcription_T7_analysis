@@ -59,7 +59,7 @@ rna_1bp, chrom_start_1bp = bcio.extract_big_wig(
 
 # Extract annotation from GFF.
 annotation = pd.DataFrame(
-    columns=["type", "chr", "start", "end", "strand", "name"]
+    columns=["type", "chr", "start", "end", "strand", "name", "tss", "tts", "rpkm"]
 )
 with open(snakemake.input.annotation, "r") as file:
     for line in file:
@@ -70,7 +70,7 @@ with open(snakemake.input.annotation, "r") as file:
             break
         else:
             line = line.split("\t")
-            if line[2] == "gene":
+            if line[2] == "CDS":
                 name = line[8].split("Name=")[-1].split(";")[0]
                 annot = {
                     "type": line[2],
@@ -82,9 +82,9 @@ with open(snakemake.input.annotation, "r") as file:
                 }
                 annotation = annotation.append(annot, ignore_index=True)
 
+print(annotation)
+
 # Find TSS/TTS positions.
-annotation["tss"] = "-"
-annotation["tts"] = "-"
 for i in annotation.index:
     if annotation.loc[i, "strand"] == "+":
         annotation.loc[i, "tss"] = annotation.loc[i, "start"]
@@ -167,7 +167,7 @@ for tu_length in [0, 3000]:
             vmax = 0.008
         ax[0].get_xaxis().set_visible(False)
         im = ax[0].imshow(
-            pileup_pos ** 0.8,
+            pileup_pos**0.8,
             cmap="Reds",
             vmin=0,
             vmax=vmax,
@@ -329,35 +329,37 @@ bcp.pileup_plot(
     pileup_control=pileup_neg,
     gen_tracks=[rna_pileup_pos],
     gen_tracks_control=[rna_pileup_neg],
-    binning=500,
+    binning=binning,
     window=50000,
     ratio="log",
     out_file=snakemake.output.pileup,
     title=label,
     dpi=200,
+    vmax=0.2,
 )
 bcp.pileup_plot(
     pileup=pileup_pos,
     pileup_control=pileup_neg,
     gen_tracks=[rna_pileup_pos],
     gen_tracks_control=[rna_pileup_neg],
-    binning=500,
+    binning=binning,
     window=25000,
     ratio="log",
     out_file=snakemake.output.pileup_zoom,
     title=label,
     dpi=200,
+    vmax=0.2,
 )
-
 bcp.pileup_plot(
     pileup=pileup_pos,
     pileup_control=pileup_neg,
     gen_tracks=[rna_pileup_pos],
     gen_tracks_control=[rna_pileup_neg],
-    binning=500,
+    binning=binning,
     window=10000,
     ratio="log",
     out_file=snakemake.output.pileup_zoom2,
     title=label,
     dpi=200,
+    vmax=0.2,
 )

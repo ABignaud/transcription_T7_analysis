@@ -95,18 +95,23 @@ rule generate_pairs:
 
 rule merge_rebin_cool:
   input:
-      lambda w: [join(TMP, 'hicstuff', f'{i}', f'{i}.cool') for i in samples[(samples.condition == w.condition) & (samples.type == 'hic')].index]
+        lambda w: [join(TMP, 'hicstuff', f'{i}', f'{i}.cool') for i in samples[(samples.condition == w.condition) & (samples.type == 'hic')].index]
   params:
-      input = lambda w: " ".join([join(TMP, 'hicstuff', f'{i}', f'{i}.cool') for i in samples[(samples.condition == w.condition) & (samples.type == 'hic')].index]),
-      prefix = join(TMP, 'cool', '{condition}_500bp'),
+        input = lambda w: " ".join([join(TMP, 'hicstuff', f'{i}', f'{i}.cool') for i in samples[(samples.condition == w.condition) & (samples.type == 'hic')].index]),
+        tmp_dir = join(TMP, 'cool'),
+        tmp = lambda w: [join(TMP, 'cool', f'{i}_500bp.cool') for i in samples[(samples.condition == w.condition) & (samples.type == 'hic')].index],
   output: join(TMP, 'cool', '{condition}_500bp.cool')
   threads: 1
   conda: "../envs/hic_processing.yaml"
   shell: 
-      """
-      hicstuff rebin -b 500bp {params.input} {params.prefix} 
-      cooler merge {params.output} {params.prefix}.cool
-      """
+        """
+        for i in {params.input}
+            do
+            lib=$(basename $i | cut -f1 -d '.')
+            hicstuff rebin --force -b 500bp $i {params.tmp_dir}/"$lib"_500bp
+        done 
+        cooler merge {output} {params.tmp} 
+        """
 
 
 # Generate multiple resolutions and normalize mcool files.
