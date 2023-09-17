@@ -1,6 +1,7 @@
 library(ggplot2)
 library(reshape2)
 library(dplyr)
+library(rstatix)
 
 set.seed(15091998)
 setwd("PHD/Projets/T7/Figures/Ascet/")
@@ -10,6 +11,15 @@ cols <- c("CFP_T7_OFF", "CFP_T7_ON", "CFP_T7_OFF_RIF", "CFP_T7_ON_RIF", "YFP_T7_
 colnames(lateral) <- cols
 
 lateral_stack <- stack(lateral)
+
+# Do t-test on all of them
+group_by(lateral_stack, ind) %>%
+  summarise(median(values, na.rm = TRUE))
+stat.test <- lateral_stack %>%
+  t_test(values ~ ind) %>%
+  adjust_pvalue(method = "BH") %>%
+  add_significance()
+
 
 ggplot(lateral_stack, aes(x=values, color=ind)) + 
   geom_density(na.rm = TRUE)
@@ -25,7 +35,13 @@ longitidunal_1focus_stack$values_corr[longitidunal_1focus_stack$values_corr < 0]
 ggplot(longitidunal_1focus_stack, aes(x=values_corr, color=ind)) + 
   geom_density(na.rm = TRUE)
 
-
+# Do t-test on all of them
+group_by(longitidunal_1focus_stack, ind) %>%
+  summarise(median(values_corr, na.rm = TRUE))
+stat.test <- longitidunal_1focus_stack %>%
+  t_test(values_corr ~ ind) %>%
+  adjust_pvalue(method = "BH") %>%
+  add_significance()
 
 longitidunal_2focus <- read.csv(file = 'longitudinal_2foci.csv', sep = ';')
 colnames(longitidunal_2focus) <- c("CFP_T7_OFF", "CFP_T7_ON", "CFP_T7_OFF_RIF", "CFP_T7_ON_RIF", "YFP_T7_OFF", "YFP_T7_ON", "YFP_T7_OFF_RIF", "YFP_T7_ON_RIF")
@@ -37,6 +53,13 @@ longitidunal_2focus_stack$values_rev <- 1 - longitidunal_2focus_stack$values
 longitidunal_2focus_stack <- transform(longitidunal_2focus_stack, values_corr=pmin(values, values_rev))
 longitidunal_2focus_stack$values_corr[longitidunal_2focus_stack$values_corr < 0] <- NA
 
+# Do t-test on all of them
+group_by(longitidunal_2focus_stack, ind) %>%
+  summarise(median(values_corr, na.rm = TRUE))
+stat.test <- longitidunal_2focus_stack %>%
+  t_test(values_corr ~ ind) %>%
+  adjust_pvalue(method = "BH") %>%
+  add_significance()
 
 ggplot(longitidunal_2focus_stack, aes(x=values, color=ind)) + 
   geom_density(na.rm = TRUE)
