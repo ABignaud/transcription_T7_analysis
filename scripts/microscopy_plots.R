@@ -2,11 +2,20 @@ library(ggplot2)
 library(reshape2)
 library(dplyr)
 library(rstatix)
+library(purrr)
 
 set.seed(15091998)
 setwd("PHD/Projets/T7/Figures/Ascet/")
 
-lateral <- read.csv(file = 'lateral.csv', sep = ';')
+x_vec <- seq(-1, 1, by=0.0001)
+df <- data.frame(x_tab = as.numeric(x_vec)) %>%
+  mutate(y_tab = 2 * (2 * sqrt(1 - x_tab ** 2))/3.14)
+ggplot(df) +
+  geom_density(aes(x_vec), bounds=c(-1, 1)) +
+  theme_minimal()
+ggsave("evenDistribution.pdf")
+
+lateral <- read.csv(file = 'lateral.csv', sep = ';', stringsAsFactors = FALSE)
 cols <- c("CFP_T7_OFF", "CFP_T7_ON", "CFP_T7_OFF_RIF", "CFP_T7_ON_RIF", "YFP_T7_OFF", "YFP_T7_ON", "YFP_T7_OFF_RIF", "YFP_T7_ON_RIF")
 colnames(lateral) <- cols
 
@@ -22,7 +31,7 @@ stat.test <- lateral_stack %>%
 
 
 ggplot(lateral_stack, aes(x=values, color=ind)) + 
-  geom_density(na.rm = TRUE)
+  geom_density(na.rm = TRUE, bounds=c(0, 0.5)) 
 
 
 longitidunal_1focus <- read.csv(file = 'longitudinal_1focus.csv', sep = ';')
@@ -33,7 +42,7 @@ longitidunal_1focus_stack$values_rev <- 1 - longitidunal_1focus_stack$values
 longitidunal_1focus_stack <- transform(longitidunal_1focus_stack, values_corr=pmin(values, values_rev))
 longitidunal_1focus_stack$values_corr[longitidunal_1focus_stack$values_corr < 0] <- NA
 ggplot(longitidunal_1focus_stack, aes(x=values_corr, color=ind)) + 
-  geom_density(na.rm = TRUE)
+  geom_density(na.rm = TRUE, bounds=c(0, 0.5))
 
 # Do t-test on all of them
 group_by(longitidunal_1focus_stack, ind) %>%
@@ -62,31 +71,33 @@ stat.test <- longitidunal_2focus_stack %>%
   add_significance()
 
 ggplot(longitidunal_2focus_stack, aes(x=values, color=ind)) + 
-  geom_density(na.rm = TRUE)
+  geom_density(na.rm = TRUE, bounds=c(0, 1))
 
 
+lateral <- mutate(lateral, col = as.numeric(col))
 
 for (col in cols) {
-  #Generate Simple Kernel Density Estimate uing the default R function
-  fit1 <- density(x=c(lateral[col]), na.rm = TRUE)    # Replace by the curve  
+  #Generate Simple Kernel Density Estimate using the default R function
+  x1 <- c(unlist(lateral[col]), unlist(1 - lateral[col]), unlist(-lateral[col]))
+  fit1 <- density(x=x1, na.rm = TRUE, from=0, to=0.5, adjust=0.33)    # Replace by the curve  
   
   #Bootstrap starts
   fit2 <- replicate(1000,
                     { 
                       #Sample with replacement, for the bootstrap from the
                       #original dataset and save the resample to x
-                      x <- sample(c(lateral[col]), replace=TRUE)                    
+                      x <- sample(x1, replace=TRUE)                    
                       
                       #Generate the density from the resampled dataset, and
                       #extract y coordinates to generate variablity bands
                       #for that particular x coordinate in the smooth curve
-                      density(x, from=min(fit1$x), to=max(fit1$x), na.rm = TRUE)$y
+                      density(x, from=min(fit1$x), to=max(fit1$x), na.rm = TRUE, adjust=0.33)$y
                     }) 
   
   #Apply the quantile function to the y coordinates to get the
   #bounds of the polygon to be drawn on the y axis
   #if so, why the 2.5% to 97.5% range
-  fit3 <- apply(fit2, 1, quantile, c(0.025,0.975) )
+  fit3 <- apply(fit2, 1, quantile, c(0.025, 0.975) )
   
   matplot(fit1$x, cbind(fit1$y, t(fit3)), type = "l",
           lty = c(1, 2, 2), lwd = 3, col = c("black", "red", "red"))
@@ -157,3 +168,10 @@ ggplot(interfocal_distance_stack, aes(y=values, x=ind, color=ind)) +
   ylim(0.75, 1) +
   theme_minimal()
 summary(interfocal_distance)
+
+
+MSD <- read.csv('MSD.csv', sep=";")
+as.numeric(MSD$X905G)
+MSD$X905GR[2:7]
+t.test(as.numeric(MSD$X905G), as.numeric(MSD$X905GR))
+t.test(as.numeric(MSD$X905A), as.numeric(MSD$X905AR))
